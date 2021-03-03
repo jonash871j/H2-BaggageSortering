@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>H2_BaggageSortering</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaggageSortering\BaggageSorteringLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CSConsoleEngine">
+      <HintPath>CSConsoleEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
