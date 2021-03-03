@@ -12,7 +12,7 @@ namespace BaggageSorteringLib
         {
             Id = id;
             Luggage = null;
-            IsOpen = false;
+            IsOpen = true;
         }
 
         public int Id { get; private set; }

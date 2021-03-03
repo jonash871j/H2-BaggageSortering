@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace BaggageSorteringLib
 {
@@ -12,15 +8,19 @@ namespace BaggageSorteringLib
         {
             Counters = new Counter[]
             {
-                new Counter(0), //..
-                new Counter(1), //..
-                new Counter(2), //..
+                new Counter(1),
+                new Counter(2),
+                new Counter(3),
+                new Counter(4),
+                new Counter(5),
             };
             Terminals = new Terminal[]
             {
-                new Terminal(0), //..
-                new Terminal(1), //..
-                new Terminal(2), //..
+                new Terminal(1), 
+                new Terminal(2), 
+                new Terminal(3), 
+                new Terminal(4), 
+                new Terminal(5), 
             };
             SortingMachine = new SortingMachine(Counters, Terminals);
         }
@@ -33,5 +33,11 @@ namespace BaggageSorteringLib
         {
             SortingMachine.Start();
         }
+
+        public void CheckLuggageIn(int terminalId, Luggage luggage)
+        {
+            Terminal terminal = Terminals.FirstOrDefault(t => t.Id == terminalId);
+        }
+
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace BaggageSorteringLib
@@ -14,17 +12,16 @@ namespace BaggageSorteringLib
         {
             Counters = counters;
             Terminals = terminals;
-            BigTrayFromCounters = new BufferTray<Luggage>(100);
-            //BigTrayToTerminals = new BufferTray<Luggage>(100);
+            ConveyorBelt = new ConveyorBelt<Luggage>(20);
         }
 
         private static Random rng = new Random();
 
         public Counter[] Counters { get; private set; }
         public Terminal[] Terminals { get; private set; }
-        public BufferTray<Luggage> BigTrayFromCounters { get; private set; }
-        //public BufferTray<Luggage> BigTrayToTerminals { get; private set; }
+        public ConveyorBelt<Luggage> ConveyorBelt { get; private set; }
         public MessageEvent ProcessInfo { get; set; }
+        public MessageEvent ProcessException { get; set; }
 
         public void Start()
         {
@@ -40,31 +37,30 @@ namespace BaggageSorteringLib
             {
                 while (true)
                 {
-                    if (Monitor.TryEnter(Counters))
+                    Monitor.Enter(ConveyorBelt);
+
+                    foreach (Counter counter in Counters)
                     {
-                        if (CheckIfCountersContainLuggage() && Monitor.TryEnter(BigTrayFromCounters))
+                        if (counter.IsReady() && ConveyorBelt.IsSpace())
                         {
-                            foreach (Counter counter in Counters)
-                            {
-                                if (counter.IsReady() && BigTrayFromCounters.IsSpace())
-                                {
-                                    Thread.Sleep(200);
-                                    Luggage luggage = counter.GetLuggageFromCounter();
-                                    BigTrayFromCounters.PushToFirst(luggage);
-                                    break;
-                                }
-                            }
-                            Monitor.PulseAll(BigTrayFromCounters);
-                            Monitor.Exit(BigTrayFromCounters);
+                            Luggage luggage = counter.GetLuggageFromCounter();
+                            ConveyorBelt.Push(luggage);
+                            ConveyorBelt.MoveForward();
+                            ProcessInfo?.Invoke($"Luggage owned by {luggage.OwnerName} is now on the conveyor belt to terminal {luggage.TerminalId}");
+                            Thread.Sleep(200);
                         }
-                        Monitor.PulseAll(Counters);
-                        Monitor.Exit(Counters);
                     }
+
+                    Monitor.Pulse(ConveyorBelt);
+                    Monitor.Wait(ConveyorBelt);
+                    Monitor.Exit(ConveyorBelt);
+;
+                    Thread.Sleep(200);
                 }
             }
             catch (Exception ex)
             {
-                ProcessInfo?.Invoke(ex.Message);
+                ProcessException?.Invoke(ex.Message);
             }
         }
         public void SorterToTerminalProcess()
@@ -73,56 +69,29 @@ namespace BaggageSorteringLib
             {
                 while (true)
                 {
-                    if ((BigTrayFromCounters.Length > 0) && Monitor.TryEnter(BigTrayFromCounters))
-                    {
-                        if (Monitor.TryEnter(Terminals))
-                        {
-                            if (!BigTrayFromCounters.IsEmpty())
-                            {
-                                Thread.Sleep(200);
-                                Luggage luggage = BigTrayFromCounters.Pull();
-                                Terminal terminal = FindTerminal(luggage.TerminalId);
-                                terminal.AddLuggage(luggage);
-                            }
-               
-                            Monitor.PulseAll(Terminals);
-                            Monitor.Exit(Terminals);
-                        }
+                    Monitor.Enter(ConveyorBelt);
 
-                        Monitor.PulseAll(BigTrayFromCounters);
-                        Monitor.Exit(BigTrayFromCounters);
+                    if (!ConveyorBelt.IsPullEmpty())
+                    {
+                        Luggage luggage = ConveyorBelt.Pull();
+                        Terminal terminal = Terminals.FirstOrDefault(t => t.Id == luggage.TerminalId);
+                        terminal.AddLuggage(luggage);
+                        ProcessInfo?.Invoke($"Luggage owned by {luggage.OwnerName} is now in terminal {terminal.Id}");
+                    }
+                    else
+                    {
+                        ConveyorBelt.MoveForward();
                     }
 
-                    Thread.Sleep(100);
+                    Monitor.Pulse(ConveyorBelt);
+                    Monitor.Wait(ConveyorBelt);
+                    Monitor.Exit(ConveyorBelt);
                 }
             }
             catch (Exception ex)
             {
-                ProcessInfo?.Invoke(ex.Message);
+                ProcessException?.Invoke(ex.Message);
             }
-        }
-
-        private bool CheckIfCountersContainLuggage()
-        {
-            foreach (Counter counter in Counters)
-            {
-                if (counter.IsReady())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        private Terminal FindTerminal(int id)
-        {
-            foreach (Terminal terminal in Terminals)
-            {
-                if (terminal.Id == id)
-                {
-                    return terminal;
-                }
-            }
-            throw new Exception("Invalid terminal id");
         }
     }
 }
