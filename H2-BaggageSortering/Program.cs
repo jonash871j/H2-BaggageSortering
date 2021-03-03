@@ -73,7 +73,7 @@ class Program
 
             if (luggage != null)
             {
-                ConsoleEx.WriteCharacter(i, y, '■', (byte)(luggage.TerminalId + 1));
+                ConsoleEx.WriteCharacter(i, y, '■', (byte)(luggage.TerminalId));
             }
         }
         ConsoleEx.SetPosition(conveyorBelt.Length + 3, y);
