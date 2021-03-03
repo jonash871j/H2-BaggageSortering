@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferTray.cs" />
+    <Compile Include="ConveyorBelt.cs" />
     <Compile Include="Counter.cs" />
     <Compile Include="IOpenClose.cs" />
     <Compile Include="Luggage.cs" />
