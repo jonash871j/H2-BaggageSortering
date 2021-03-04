@@ -44,6 +44,7 @@ static class AirportDraw
     }
     public static void InfoBuffer(int y, string title, ConsoleBuffer buffer)
     {
+        Draw.Color = Color.Grey;
         Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + buffer.Length + 2, true, '.');
         ConsoleEx.SetPosition(2, y + 1);
         ConsoleEx.WriteLine("\f5- " + title);
@@ -51,31 +52,36 @@ static class AirportDraw
     }
     public static void FlightSchedule(int y, FlightSchedule flightSchedule)
     {
+        Draw.Color = Color.Grey;
         Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + flightSchedule.FlightScreenLength + 2, true, '.');
         ConsoleEx.SetPosition(2, y + 1);
-        ConsoleEx.WriteLine("\f3- Flight schedule");
+        ConsoleEx.WriteLine("\f3- FLIGHT SCHEDULE");
+        ConsoleEx.SetPosition(2, y + 2);
+        ConsoleEx.Write("\f3DEPATURE");
+        ConsoleEx.SetPosition(16, y + 2);
+        ConsoleEx.Write("\f3DESTINATION");
+        ConsoleEx.SetPosition(36, y + 2);
+        ConsoleEx.Write("\f3FLIGHT");
+        ConsoleEx.SetPosition(48, y + 2);
+        ConsoleEx.Write("\f3GATE");
+        ConsoleEx.SetPosition(56, y + 2);
+        ConsoleEx.Write("\f3STATUS");
+
         if (flightSchedule.FlightScreen.Count > 0)
         {
-            ConsoleEx.SetPosition(2, y + 2);
-            ConsoleEx.Write("Depature");
-            ConsoleEx.SetPosition(9, y + 2);
-            ConsoleEx.Write("Destination");
-            ConsoleEx.SetPosition(32, y + 2);
-            ConsoleEx.Write("Name");
-            ConsoleEx.SetPosition(42, y + 2);
-            ConsoleEx.Write("Terminal");
-
             for (int i = 0; i < flightSchedule.FlightScreen.Count; i++)
             {
                 Flight flight = flightSchedule.FlightScreen[i];
                 ConsoleEx.SetPosition(2, y + i + 3);
                 ConsoleEx.Write($"{flight.Departure.ToString("HH:mm")}");
-                ConsoleEx.SetPosition(9, y + i + 3);
+                ConsoleEx.SetPosition(16, y + i + 3);
                 ConsoleEx.Write($"{flight.Destination}");
-                ConsoleEx.SetPosition(32, y + i + 3);
+                ConsoleEx.SetPosition(36, y + i + 3);
                 ConsoleEx.Write($"{flight.Name}");
-                ConsoleEx.SetPosition(42, y + i + 3);
-                ConsoleEx.Write($"{flight.Terminal.Id}");
+                ConsoleEx.SetPosition(48, y + i + 3);
+                ConsoleEx.Write($"{flight.Terminal}");
+                ConsoleEx.SetPosition(56, y + i + 3);
+                ConsoleEx.Write($"{flight.Status}");
             }
         }
     }

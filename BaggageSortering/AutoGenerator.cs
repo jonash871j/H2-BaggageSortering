@@ -17,34 +17,46 @@ namespace BaggageSorteringLib
 
         public Simulator Simulator { get; private set; }
 
-        public void UpdateFlightSchedule()
-        {
-            if (Simulator.FlightSchedule.Flights.Count < 20)
-            {
-                Simulator.AddFlight(CreateRandomFlight());
-            }
-        }
-
         public Flight CreateRandomFlight()
         {
-            List<Flight> flights = Simulator.FlightSchedule.Flights;
-            DateTime depature = Simulator.Time.AddMinutes(rng.Next(15, 60));
-
-            if (flights.Count > 0)
+            // Creates arrival based on lates depature times in flight scheduler
+            DateTime arrival = Simulator.Time.DateTime.AddMinutes(rng.Next(15, 60));
+            if (Simulator.FlightSchedule.Flights.Count > 0)
             {
-                depature = flights.OrderByDescending(f => f.Departure).FirstOrDefault().Departure;
-                depature = depature.AddMinutes(rng.Next(0, 60));
+                arrival = Simulator.FlightSchedule.Flights.OrderByDescending(f => f.Arrival)
+                    .FirstOrDefault().Arrival;
+                arrival = arrival.AddMinutes(rng.Next(0, 30));
             }
 
-            Flight flight = new Flight(
-                $"F-{rng.Next(0, 10000)}", rng.Next(100, 300),
-                Simulator.Terminals[rng.Next(0, Simulator.Terminals.Length)],
-                depature,
-                depature.AddMinutes(rng.Next(120, 960)),
-                AirportData.CityDestinations[rng.Next(0, AirportData.CityDestinations.Length)]
+            return new Flight(
+                name: $"F-{rng.Next(0, 10000)}",
+                seats: rng.Next(100, 300),
+                terminal: Simulator.Terminals[rng.Next(0, Simulator.Terminals.Length)],
+                arrival: arrival,
+                departure: arrival.AddMinutes(60),
+                destination: Data.GetRandomCity()
+            );
+        }
+        public Reservation CreateRandomReservation()
+        {
+            string firstName = Data.GetRandomName();
+
+            Passenger passenger = new Passenger(
+                firstName: firstName,   
+                lastName: Data.GetRandomName(),
+                email: firstName + rng.Next(1, 10000) + "@gmail.com",
+                phoneNumber: "+45" + rng.Next(10000000, 99999999),
+                address: $"{Data.GetRandomCity()} {Data.GetRandomStreet()} {rng.Next(1, 1000)}"
+            );
+            List<Flight> flights = Simulator.FlightSchedule.Flights;
+
+            Reservation reservation = new Reservation(
+                passenger: passenger,
+                flight: flights[rng.Next(0, flights.Count)],
+                seat: "dont care"
             );
 
-            return flight;
+            return reservation;
         }
     }
 }

@@ -8,15 +8,15 @@ namespace BaggageSorteringLib
 
     public class SortingMachine
     {
-        public SortingMachine(Counter[] counters, Terminal[] terminals)
+        public SortingMachine(SimulationTime time, Counter[] counters, Terminal[] terminals)
         {
+            Time = time;
             Counters = counters;
             Terminals = terminals;
             ConveyorBelt = new ConveyorBelt<Luggage>(20);
         }
 
-        private static Random rng = new Random();
-
+        public SimulationTime Time { get; private set; }
         public Counter[] Counters { get; private set; }
         public Terminal[] Terminals { get; private set; }
         public ConveyorBelt<Luggage> ConveyorBelt { get; private set; }
@@ -47,19 +47,19 @@ namespace BaggageSorteringLib
                             ConveyorBelt.Push(luggage);
                             ConveyorBelt.MoveForward();
                             ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now on the conveyor belt to terminal {luggage.TerminalId}");
-                            Thread.Sleep(200);
+                            Thread.Sleep(250 / Time.Speed);
                         }
                     }
 
                     Monitor.Pulse(ConveyorBelt);
                     Monitor.Wait(ConveyorBelt);
                     Monitor.Exit(ConveyorBelt);
-                    Thread.Sleep(200);
+                    Thread.Sleep(250 / Time.Speed);
                 }
             }
             catch (Exception ex)
             {
-                ProcessException?.Invoke(ex.Message);
+                ProcessException?.Invoke("Thread CTS crashed: " + ex.Message);
             }
         }
         public void SorterToTerminalProcess()
@@ -89,7 +89,7 @@ namespace BaggageSorteringLib
             }
             catch (Exception ex)
             {
-                ProcessException?.Invoke(ex.Message);
+                ProcessException?.Invoke("Thread STT crashed: " + ex.Message);
             }
         }
     }

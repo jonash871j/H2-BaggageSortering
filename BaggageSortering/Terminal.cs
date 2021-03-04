@@ -18,6 +18,7 @@ namespace BaggageSorteringLib
         public int Id { get; private set; }
         public bool IsOpen { get; private set; }
         public Queue<Luggage> Luggages { get; private set; }
+        public Flight Flight { get; private set; }
 
         public void Close()
         {
@@ -31,6 +32,18 @@ namespace BaggageSorteringLib
         public void AddLuggage(Luggage luggage)
         {
             Luggages.Enqueue(luggage);
+        }
+
+        public override string ToString()
+        {
+            if (IsOpen)
+            {
+                return $"{Id}";
+            }
+            else
+            {
+                return $"{Id}";
+            }
         }
     }
 }

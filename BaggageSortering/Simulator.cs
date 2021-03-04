@@ -7,9 +7,9 @@ namespace BaggageSorteringLib
 {
     public class Simulator
     {
-        public Simulator(bool isAutoGenerationEnabled)
+        public Simulator()
         {
-            Time = DateTime.Now;
+            Time = new SimulationTime();
             Counters = new Counter[]
             {
                 new Counter(1),
@@ -26,76 +26,60 @@ namespace BaggageSorteringLib
                 new Terminal(4), 
                 new Terminal(5), 
             };
-            SortingMachine = new SortingMachine(Counters, Terminals);
+            SortingMachine = new SortingMachine(Time, Counters, Terminals);
             FlightSchedule = new FlightSchedule(12);
-            IsAutoGenerationEnabled = isAutoGenerationEnabled;
-
-            timer = new Timer(1000);
-            timer.Elapsed += OnTick;
-            timer.Enabled = true;
 
             autoGenerator = new AutoGenerator(this);
         }
         
-        private int _speed = 1;
-        private bool isUpdateCycle = false;
         private readonly Random rng = new Random();
-        private readonly Timer timer;
         private readonly AutoGenerator autoGenerator;
 
-        public static DateTime Time { get; private set; }
+        public SimulationTime Time { get; private set; }
         public Counter[] Counters { get; private set; }
         public Terminal[] Terminals { get; private set; }
         public SortingMachine SortingMachine { get; private set; }
         public FlightSchedule FlightSchedule { get; private set; }
         public bool IsAutoGenerationEnabled { get; set; }
-        public int Speed 
-        {
-            get => _speed;
-            set
-            {
-                _speed = value;
-                timer.Interval = 1000 / _speed;
-            }
-        }
 
         public void Start()
         {
             SortingMachine.Start();
+            Update();
         }
 
-        public void CheckLuggageIn(int terminalId, Luggage luggage)
+        public void CheckLuggageIn(int counterId, Luggage luggage)
         {
-            Terminal terminal = Terminals.FirstOrDefault(t => t.Id == terminalId);
+            Counter counter = Counters.FirstOrDefault(c => c.Id == counterId);
+            counter.CheckLuggageIn(luggage);
         }
         public void AddReservation(Reservation reservation)
         {
             FlightSchedule.AddReservation(reservation);
         }
-        public void AddFlight(Flight flight)
-        {
-            FlightSchedule.AddFlight(flight);
-        }
-
         public void Update()
         {
-            if (isUpdateCycle)
+            if (Time.IsUpdateCycle)
             {
-                Time = Time.AddMinutes(1);
-                FlightSchedule.RemoveOldFlights();
-                FlightSchedule.UpdateFlightScreen();
-
+                // Auto generate flights and reservations
                 if (IsAutoGenerationEnabled)
                 {
-                    autoGenerator.UpdateFlightSchedule();
+                    // Creates random flights
+                    while (FlightSchedule.Flights.Count < 100)
+                    {
+                        FlightSchedule.AddFlight(autoGenerator.CreateRandomFlight());
+                    }
                 }
-                isUpdateCycle = false;
-            }
-        }
 
-        private void OnTick(object sender, ElapsedEventArgs e)
-        {
-            isUpdateCycle = true;
+                // Update flight scheduler
+                FlightSchedule.UpdateStatuses(Time);
+                FlightSchedule.RemoveOldFlights(Time);
+                FlightSchedule.UpdateFlightScreen();
+
+                // Update simulation time
+                Time.IsUpdateCycle = false;
+                Time.MoveTime();
+            }
         }
     }
 }

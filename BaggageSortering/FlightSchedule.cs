@@ -28,13 +28,22 @@ namespace BaggageSorteringLib
             Flights.First(x => x.Name == reservation.Flight.Name)
                 .Reservations.Add(reservation);
         }
-        public void RemoveOldFlights()
+
+        public void UpdateStatuses(SimulationTime time)
+        {
+            for (int i = 0; i < Flights.Count; i++)
+            {
+                Flights[i].UpdateFlightStatus(time);
+            }
+        }
+        public void RemoveOldFlights(SimulationTime time)
         {
             if (Flights.Count > 0)
             {
-                Flights.RemoveAll(f => f.Departure < Simulator.Time);
+                Flights.RemoveAll(f => f.Departure < time.DateTime);
             }
         }
+
         public void UpdateFlightScreen()
         {
             List<Flight> flights = Flights.OrderBy(x => x.Departure).ToList();

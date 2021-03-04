@@ -12,6 +12,7 @@ class Program
     };
 
     static Simulator simulator;
+    static AutoGenerator autoGenerator;
     static ConsoleBuffer infoBuffer = new ConsoleBuffer(12);
     static FormState formState = FormState.AirportOverview;
 
@@ -21,10 +22,13 @@ class Program
     static void Main(string[] args)
     {
         // Starts simulator
-        simulator = new Simulator(isAutoGenerationEnabled: true);
+        simulator = new Simulator();
+        simulator.IsAutoGenerationEnabled = true;
         simulator.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;
         simulator.SortingMachine.ProcessException += OnSortingMachineProcessException;
         simulator.Start();
+
+        autoGenerator = new AutoGenerator(simulator);
 
         // Creates advanced console
         ConsoleEx.Create(80, 48);
@@ -57,41 +61,47 @@ class Program
     {
         infoBuffer.WriteLine("\fc" + msg);
     }
-
+  
     // Form methods *******************************
     static void AirportOverview()
     {
-        ConsoleEx.WriteLine($"- \faAirpot Overview \f7| \feSpeed {simulator.Speed}x \f7| \ff{Simulator.Time.ToShortTimeString()}");
+        // Testing
+        if (Input.KeyPressed((Key)('A'))) simulator.CheckLuggageIn(1, new Luggage(1, autoGenerator.CreateRandomReservation()));
+        if (Input.KeyPressed((Key)('S'))) simulator.CheckLuggageIn(2, new Luggage(2, autoGenerator.CreateRandomReservation()));
+        if (Input.KeyPressed((Key)('D'))) simulator.CheckLuggageIn(3, new Luggage(3, autoGenerator.CreateRandomReservation()));
+        if (Input.KeyPressed((Key)('F'))) simulator.CheckLuggageIn(4, new Luggage(4, autoGenerator.CreateRandomReservation()));
+        if (Input.KeyPressed((Key)('G'))) simulator.CheckLuggageIn(5, new Luggage(5, autoGenerator.CreateRandomReservation()));
+
+        ConsoleEx.WriteLine($"- \faAIRPOT OVERVIEW \f7| \feSPEED {simulator.Time.Speed}x \f7| \ff{simulator.Time.DateTime.ToShortTimeString()}");
         AirportDraw.Counters(simulator.Counters, 1);
         AirportDraw.ConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 8);
         AirportDraw.Terminals(simulator.Terminals, 9);
         AirportDraw.FlightSchedule(19, simulator.FlightSchedule);
-        AirportDraw.InfoBuffer(33, "Sorting machine info", infoBuffer);
+        AirportDraw.InfoBuffer(33, "SORTING MACHINE INFO", infoBuffer);
     }
     static void PassengerCreation()
     {
-        ConsoleEx.WriteLine("- \f9Passenger Creation");
+        ConsoleEx.WriteLine("- \f9PASSENGER CREATION");
         passenger.FirstName = UserTextInput(passenger.FirstName, 'F', "FirstName");
         passenger.LastName = UserTextInput(passenger.LastName, 'L', "LastName");
+        passenger.Address = UserTextInput(passenger.Address, 'A', "Address");
         passenger.Email = UserTextInput(passenger.Email, 'E', "Email");
         passenger.PhoneNumber = UserTextInput(passenger.PhoneNumber, 'P', "PhoneNumber");
         ConsoleEx.WriteLine($"\nPassenger: {passenger}");
     }
     static void ReservationCreation()
     {
-
-        
+        ConsoleEx.WriteLine("- \fbRESERVATION CREATION");
     }
 
     // Input methods *******************************
-
     static void GlobalUserInput()
     {
         for (int i = 0; i < 9; i++)
         {
             if (Input.KeyPressed((Key)(i + '1')))
             {
-               simulator.Speed = (int)Math.Pow(2, i);
+               simulator.Time.Speed = (int)Math.Pow(2, i);
             }
         }
 
