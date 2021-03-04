@@ -54,9 +54,12 @@ static class AirportDraw
         Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + flightSchedule.FlightScreenLength + 2, true, '.');
         ConsoleEx.SetPosition(2, y + 1);
         ConsoleEx.WriteLine("- Flight schedule");
-        foreach (Flight flight in flightSchedule.FlightScreen)
+        if (flightSchedule.FlightScreen.Count > 0)
         {
-            ConsoleEx.WriteLine(flight.ToString());
+            foreach (Flight flight in flightSchedule.FlightScreen)
+            {
+                ConsoleEx.WriteLine(flight.ToString());
+            }
         }
     }
 }
