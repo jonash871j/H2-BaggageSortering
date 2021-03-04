@@ -109,4 +109,5 @@ class Program
         Draw.Rectangle(0, 18, ConsoleEx.Width - 1, ConsoleEx.Height - 1, true, '.');
         Draw.ConsoleBuffer(2, 19, infoBuffer);
     }
+
 }
