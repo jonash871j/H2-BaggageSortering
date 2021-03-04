@@ -21,14 +21,14 @@ class Program
     static void Main(string[] args)
     {
         // Starts simulator
-        simulator = new Simulator();
+        simulator = new Simulator(isAutoGenerationEnabled: true);
         simulator.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;
         simulator.SortingMachine.ProcessException += OnSortingMachineProcessException;
         simulator.Start();
 
         // Creates advanced console
         ConsoleEx.Create(80, 48);
-        ConsoleEx.SetFont("Consolas", 8, 16);
+        ConsoleEx.SetFont("Terminal", 12, 16);
 
         while (true)
         {
@@ -41,6 +41,7 @@ class Program
                 case FormState.PassengerCreation    : PassengerCreation();  break;
                 case FormState.ReservationCreation  : ReservationCreation();  break;
             }
+            simulator.Update();
 
             ConsoleEx.Update();
             ConsoleEx.Clear();  
@@ -60,7 +61,7 @@ class Program
     // Form methods *******************************
     static void AirportOverview()
     {
-        ConsoleEx.WriteLine($"- \faAirpot Overview \f7| \ff{Simulator.Time.ToShortTimeString()}");
+        ConsoleEx.WriteLine($"- \faAirpot Overview \f7| \feSpeed {simulator.Speed}x \f7| \ff{Simulator.Time.ToShortTimeString()}");
         AirportDraw.Counters(simulator.Counters, 1);
         AirportDraw.ConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 8);
         AirportDraw.Terminals(simulator.Terminals, 9);
@@ -69,7 +70,7 @@ class Program
     }
     static void PassengerCreation()
     {
-        ConsoleEx.WriteLine("- \f9Passenger creation");
+        ConsoleEx.WriteLine("- \f9Passenger Creation");
         passenger.FirstName = UserTextInput(passenger.FirstName, 'F', "FirstName");
         passenger.LastName = UserTextInput(passenger.LastName, 'L', "LastName");
         passenger.Email = UserTextInput(passenger.Email, 'E', "Email");
@@ -86,6 +87,14 @@ class Program
 
     static void GlobalUserInput()
     {
+        for (int i = 0; i < 9; i++)
+        {
+            if (Input.KeyPressed((Key)(i + '1')))
+            {
+               simulator.Speed = (int)Math.Pow(2, i);
+            }
+        }
+
         // Changes form state by pressing space
         if (Input.KeyPressed(Key.SPACE))
         {

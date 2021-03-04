@@ -46,14 +46,14 @@ static class AirportDraw
     {
         Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + buffer.Length + 2, true, '.');
         ConsoleEx.SetPosition(2, y + 1);
-        ConsoleEx.WriteLine("- " + title);
+        ConsoleEx.WriteLine("\f5- " + title);
         Draw.ConsoleBuffer(2, y + 2, buffer);
     }
     public static void FlightSchedule(int y, FlightSchedule flightSchedule)
     {
         Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + flightSchedule.FlightScreenLength + 2, true, '.');
         ConsoleEx.SetPosition(2, y + 1);
-        ConsoleEx.WriteLine("- Flight schedule");
+        ConsoleEx.WriteLine("\f3- Flight schedule");
         if (flightSchedule.FlightScreen.Count > 0)
         {
             foreach (Flight flight in flightSchedule.FlightScreen)

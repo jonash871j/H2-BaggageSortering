@@ -8,7 +8,7 @@ namespace BaggageSorteringLib
 {
     public class Flight
     {
-        public Flight(string name, int seatAmount, Terminal terminal, DateTime arrival, DateTime departure, string destination)
+        public Flight(string name, int seatAmount, Terminal terminal, DateTime departure, DateTime arrival, string destination)
         {
             Name = name;
             Terminal = terminal;

@@ -7,7 +7,7 @@ namespace BaggageSorteringLib
 {
     public class Simulator
     {
-        public Simulator()
+        public Simulator(bool isAutoGenerationEnabled)
         {
             Time = DateTime.Now;
             Counters = new Counter[]
@@ -28,26 +28,36 @@ namespace BaggageSorteringLib
             };
             SortingMachine = new SortingMachine(Counters, Terminals);
             FlightSchedule = new FlightSchedule(12);
-            FlightSchedule.AddFlight(new Flight("F-123", 400, Terminals[0], Time, Time.AddMinutes(15), "New York"));
-            FlightSchedule.AddFlight(new Flight("F-123", 400, Terminals[0], Time, Time.AddMinutes(30), "New York"));
-            FlightSchedule.AddFlight(new Flight("F-123", 400, Terminals[0], Time, Time.AddMinutes(45), "New York"));
-            FlightSchedule.AddFlight(new Flight("SAS-1234", 400, Terminals[0], Time, Time.AddMinutes(60), "Copenhagen"));
-            FlightSchedule.AddFlight(new Flight("F-123", 400, Terminals[0], Time, Time.AddMinutes(120), "New York"));
-            FlightSchedule.AddFlight(new Flight("F-123", 400, Terminals[0], Time, Time.AddMinutes(160), "New York"));
+            IsAutoGenerationEnabled = isAutoGenerationEnabled;
 
             timer = new Timer(1000);
             timer.Elapsed += OnTick;
             timer.Enabled = true;
+
+            autoGenerator = new AutoGenerator(this);
         }
         
+        private int _speed = 1;
+        private bool isUpdateCycle = false;
         private readonly Random rng = new Random();
         private readonly Timer timer;
+        private readonly AutoGenerator autoGenerator;
 
         public static DateTime Time { get; private set; }
         public Counter[] Counters { get; private set; }
         public Terminal[] Terminals { get; private set; }
         public SortingMachine SortingMachine { get; private set; }
         public FlightSchedule FlightSchedule { get; private set; }
+        public bool IsAutoGenerationEnabled { get; set; }
+        public int Speed 
+        {
+            get => _speed;
+            set
+            {
+                _speed = value;
+                timer.Interval = 1000 / _speed;
+            }
+        }
 
         public void Start()
         {
@@ -67,15 +77,25 @@ namespace BaggageSorteringLib
             FlightSchedule.AddFlight(flight);
         }
 
+        public void Update()
+        {
+            if (isUpdateCycle)
+            {
+                Time = Time.AddMinutes(1);
+                FlightSchedule.RemoveOldFlights();
+                FlightSchedule.UpdateFlightScreen();
+
+                if (IsAutoGenerationEnabled)
+                {
+                    autoGenerator.UpdateFlightSchedule();
+                }
+                isUpdateCycle = false;
+            }
+        }
+
         private void OnTick(object sender, ElapsedEventArgs e)
         {
-            Time = Time.AddMinutes(1);
-            FlightSchedule.RemoveOldFlights();
-            FlightSchedule.UpdateFlightScreen();
-            //if (FlightPlans.Count < 15)
-            //{
-            //    autoGenerator.GenerateFlightPlan();
-            //}
+            isUpdateCycle = true;
         }
     }
 }
