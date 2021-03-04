@@ -8,13 +8,13 @@ namespace BaggageSorteringLib
 {
     public class Luggage
     {
-        public Luggage(string ownerName, int terminalId)
+        public Luggage(int terminalId, Reservation reservation)
         {
-            OwnerName = ownerName;
             TerminalId = terminalId;
+            Reservation = reservation;
         }
 
-        public string OwnerName { get; set; }
         public int TerminalId { get; set; }
+        public Reservation Reservation { get; set; }
     }
 }

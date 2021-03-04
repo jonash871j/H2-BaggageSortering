@@ -1,56 +1,49 @@
 ﻿using BaggageSorteringLib;
 using Engine;
+using System;
 
 class Program
 {
+    enum FormState
+    {
+        AirportOverview,
+        PassengerCreation,
+        ReservationCreation,
+    };
+
+    static Simulator simulator;
     static ConsoleBuffer infoBuffer = new ConsoleBuffer(12);
+    static FormState formState = FormState.AirportOverview;
+
+    static Passenger passenger = new Passenger();
+    //static Reservation reservation = new Reservation();
 
     static void Main(string[] args)
     {
-        Simulator simulator = new Simulator();
+        // Starts simulator
+        simulator = new Simulator();
         simulator.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;
         simulator.SortingMachine.ProcessException += OnSortingMachineProcessException;
         simulator.Start();
 
-        ConsoleEx.Create(80, 32);
+        // Creates advanced console
+        ConsoleEx.Create(80, 48);
         ConsoleEx.SetFont("Consolas", 8, 16);
 
         while (true)
         {
-            UserInput(simulator);
+            GlobalUserInput();
 
-            DrawCounters(simulator.Counters, 1);
-            DrawConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 8);
-            DrawTerminals(simulator.Terminals, 9);
-            DrawInfoBuffer();
+            // Shows current form state
+            switch (formState)
+            {
+                case FormState.AirportOverview      : AirportOverview();    break;
+                case FormState.PassengerCreation    : PassengerCreation();  break;
+                case FormState.ReservationCreation  : ReservationCreation();  break;
+            }
 
             ConsoleEx.Update();
-            ConsoleEx.Clear();
-        }
-    }
-
-    // User input ***********************************
-    private static void UserInput(Simulator simulator)
-    {
-        if (Input.KeyPressed((Key)'1'))
-        {
-            simulator.Counters[0].CheckLuggageIn(new Luggage("Name 1", 1));
-        }
-        if (Input.KeyPressed((Key)'2'))
-        {
-            simulator.Counters[1].CheckLuggageIn(new Luggage("Name 2", 2));
-        }
-        if (Input.KeyPressed((Key)'3'))
-        {
-            simulator.Counters[2].CheckLuggageIn(new Luggage("Name 3", 3));
-        }
-        if (Input.KeyPressed((Key)'4'))
-        {
-            simulator.Counters[3].CheckLuggageIn(new Luggage("Name 4", 4));
-        }
-        if (Input.KeyPressed((Key)'5'))
-        {
-            simulator.Counters[4].CheckLuggageIn(new Luggage("Name 5", 5));
+            ConsoleEx.Clear();  
         }
     }
 
@@ -64,50 +57,69 @@ class Program
         infoBuffer.WriteLine("\fc" + msg);
     }
 
-    // Draw functions *******************************
-    static void DrawConveyorBelt(ConveyorBelt<Luggage> conveyorBelt, string name, int y)
+    // Form methods *******************************
+    static void AirportOverview()
     {
-        for (int i = 0; i < conveyorBelt.Length; i++)
-        {
-            Luggage luggage = conveyorBelt.Buffer[i];
+        ConsoleEx.WriteLine($"- \faAirpot Overview \f7| \ff{Simulator.Time.ToShortTimeString()}");
+        AirportDraw.Counters(simulator.Counters, 1);
+        AirportDraw.ConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 8);
+        AirportDraw.Terminals(simulator.Terminals, 9);
+        AirportDraw.FlightSchedule(19, simulator.FlightSchedule);
+        AirportDraw.InfoBuffer(33, "Sorting machine info", infoBuffer);
+    }
+    static void PassengerCreation()
+    {
+        ConsoleEx.WriteLine("- \f9Passenger creation");
+        passenger.FirstName = UserTextInput(passenger.FirstName, 'F', "FirstName");
+        passenger.LastName = UserTextInput(passenger.LastName, 'L', "LastName");
+        passenger.Email = UserTextInput(passenger.Email, 'E', "Email");
+        passenger.PhoneNumber = UserTextInput(passenger.PhoneNumber, 'P', "PhoneNumber");
+        ConsoleEx.WriteLine($"\nPassenger: {passenger}");
+    }
+    static void ReservationCreation()
+    {
 
-            if (luggage != null)
+        
+    }
+
+    // Input methods *******************************
+
+    static void GlobalUserInput()
+    {
+        // Changes form state by pressing space
+        if (Input.KeyPressed(Key.SPACE))
+        {
+            formState++;
+            if ((int)formState >= Enum.GetNames(typeof(FormState)).Length)
             {
-                ConsoleEx.WriteCharacter(i, y, '■', (byte)(luggage.TerminalId));
+                formState = 0;
             }
         }
-        ConsoleEx.SetPosition(conveyorBelt.Length + 3, y);
-        ConsoleEx.WriteLine(name);
     }
-    static void DrawCounters(Counter[] counters, int y)
-    {
-        ConsoleEx.SetPosition(0, y);
-        foreach (Counter counter in counters)
-        {
-            ConsoleEx.WriteLine($"Counter {counter.Id}: IsReady {counter.IsReady()}");
-        }
-    }
-    static void DrawTerminals(Terminal[] terminals, int y)
-    {
-        for (int i = 0; i < terminals.Length; i++)
-        {
-            Terminal terminal = terminals[i];
 
-            ConsoleEx.SetPosition(0, y + i);
-            ConsoleEx.WriteLine($"Terminal {terminal.Id} \f{terminal.Id} = ");
+    // Misc *********************************
+    static string UserTextInput(string previewsData, char key, string fieldName)
+    {
+        ConsoleEx.WriteLine($"{key}: Sets {fieldName}");
 
-            int j = 0;
-            foreach (Luggage luggage in terminal.Luggages)
+        if (Input.KeyPressed((Key)key))
+        { 
+            string output = previewsData;
+            Input.Flush();
+
+            while (!Input.KeyPressed(Key.RETURN))
             {
-                ConsoleEx.WriteCharacter(j + 14, y + i, '■', (byte)(terminal.Id));
-                j++;
+                ConsoleEx.SetPosition(0, 0);
+                ConsoleEx.WriteLine(fieldName + " : " + output);
+                output = Input.Read(output);
+                ConsoleEx.Update();
+                ConsoleEx.Clear();
+            }
+            if (!string.IsNullOrEmpty(output))
+            {
+                return output;
             }
         }
+        return previewsData;
     }
-    static void DrawInfoBuffer()
-    {
-        Draw.Rectangle(0, 18, ConsoleEx.Width - 1, ConsoleEx.Height - 1, true, '.');
-        Draw.ConsoleBuffer(2, 19, infoBuffer);
-    }
-
 }

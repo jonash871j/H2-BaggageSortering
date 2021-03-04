@@ -19,14 +19,15 @@ namespace BaggageSorteringLib
 
         public Flight CreateRandomFlight()
         {
-            //Flight plan = new Flight(
-            //    new Flight($"F-{rng.Next(0, 10000)}", rng.Next(100, 300)),
-            //    Simulator.Terminals[rng.Next(0, Simulator.Terminals.Length)],
-            //    DateTime.Now,
-            //    DateTime.Now,
-            //    AirportData.CityDestinations[rng.Next(0, AirportData.CityDestinations.Length)]
-            //);
-            return null;
+            Flight flight = new Flight(
+                $"F-{rng.Next(0, 10000)}", rng.Next(100, 300),
+                Simulator.Terminals[rng.Next(0, Simulator.Terminals.Length)],
+                Simulator.Time,
+                Simulator.Time,
+                AirportData.CityDestinations[rng.Next(0, AirportData.CityDestinations.Length)]
+            );
+
+            return flight;
         }
     }
 }

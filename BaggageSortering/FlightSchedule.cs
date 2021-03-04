@@ -8,16 +8,18 @@ namespace BaggageSorteringLib
 {
     public class FlightSchedule
     {
-        public FlightSchedule(int flightScreenLenght)
+        public FlightSchedule(int flightScreenLength)
         {
-            FlightScreen = new Flight[flightScreenLenght];
+            FlightScreenLength = flightScreenLength;
+            FlightScreen = new List<Flight>();
             Flights = new List<Flight>();
         }
 
-        public Flight[] FlightScreen { get; private set; }
+        public int FlightScreenLength { get; private set; }
+        public List<Flight> FlightScreen { get; private set; }
         public List<Flight> Flights { get; private set; }
 
-        public void AddFlightDepature(Flight flight)
+        public void AddFlight(Flight flight)
         {
             Flights.Add(flight);
         }
@@ -26,9 +28,29 @@ namespace BaggageSorteringLib
             Flights.First(x => x.Name == reservation.Flight.Name)
                 .Reservations.Add(reservation);
         }
-        public void RemoveOldFlightDepartures()
+        public void RemoveOldFlights()
         {
-            Flights.RemoveAll(f => f.Departure > Simulator.Time);
+            if (Flights.Count > 0)
+            {
+                Flights.RemoveAll(f => f.Departure < Simulator.Time);
+            }
+        }
+        public void UpdateFlightScreen()
+        {
+            List<Flight> flights = Flights.OrderBy(x => x.Departure).ToList();
+            FlightScreen.Clear();
+
+            for (int i = 0; i < flights.Count; i++)
+            {
+                if (i >= FlightScreenLength)
+                {
+                    break;
+                }
+                else
+                {
+                    FlightScreen.Add(flights[i]);
+                }
+            }
         }
     }
 }

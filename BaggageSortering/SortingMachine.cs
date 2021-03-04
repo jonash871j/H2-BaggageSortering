@@ -46,7 +46,7 @@ namespace BaggageSorteringLib
                             Luggage luggage = counter.GetLuggageFromCounter();
                             ConveyorBelt.Push(luggage);
                             ConveyorBelt.MoveForward();
-                            ProcessInfo?.Invoke($"Luggage owned by {luggage.OwnerName} is now on the conveyor belt to terminal {luggage.TerminalId}");
+                            ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now on the conveyor belt to terminal {luggage.TerminalId}");
                             Thread.Sleep(200);
                         }
                     }
@@ -75,7 +75,7 @@ namespace BaggageSorteringLib
                         Luggage luggage = ConveyorBelt.Pull();
                         Terminal terminal = Terminals.FirstOrDefault(t => t.Id == luggage.TerminalId);
                         terminal.AddLuggage(luggage);
-                        ProcessInfo?.Invoke($"Luggage owned by {luggage.OwnerName} is now in terminal {terminal.Id}");
+                        ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now in terminal {terminal.Id}");
                     }
                     else
                     {

@@ -31,7 +31,7 @@ namespace BaggageSorteringLib
 
         public override string ToString()
         {
-            return $"{Departure.ToString("H:mm")}  {Destination}  {Name}  {Terminal.Id}";
+            return $"{Departure.ToString("HH:mm")}  {Destination}  {Name}  {Terminal.Id}";
         }
 
         private void GenerateSeatNames()
