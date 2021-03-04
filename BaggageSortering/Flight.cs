@@ -29,11 +29,6 @@ namespace BaggageSorteringLib
         public Queue<Luggage> Luggages { get; private set; }
         public List<Reservation> Reservations { get; private set; }
 
-        public override string ToString()
-        {
-            return $"{Departure.ToString("HH:mm")}  {Destination}  {Name}  {Terminal.Id}";
-        }
-
         private void GenerateSeatNames()
         {
             for (int i = 0; i < Seats.Length; i++)

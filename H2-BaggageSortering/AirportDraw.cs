@@ -56,9 +56,26 @@ static class AirportDraw
         ConsoleEx.WriteLine("\f3- Flight schedule");
         if (flightSchedule.FlightScreen.Count > 0)
         {
-            foreach (Flight flight in flightSchedule.FlightScreen)
+            ConsoleEx.SetPosition(2, y + 2);
+            ConsoleEx.Write("Depature");
+            ConsoleEx.SetPosition(9, y + 2);
+            ConsoleEx.Write("Destination");
+            ConsoleEx.SetPosition(32, y + 2);
+            ConsoleEx.Write("Name");
+            ConsoleEx.SetPosition(42, y + 2);
+            ConsoleEx.Write("Terminal");
+
+            for (int i = 0; i < flightSchedule.FlightScreen.Count; i++)
             {
-                ConsoleEx.WriteLine(flight.ToString());
+                Flight flight = flightSchedule.FlightScreen[i];
+                ConsoleEx.SetPosition(2, y + i + 3);
+                ConsoleEx.Write($"{flight.Departure.ToString("HH:mm")}");
+                ConsoleEx.SetPosition(9, y + i + 3);
+                ConsoleEx.Write($"{flight.Destination}");
+                ConsoleEx.SetPosition(32, y + i + 3);
+                ConsoleEx.Write($"{flight.Name}");
+                ConsoleEx.SetPosition(42, y + i + 3);
+                ConsoleEx.Write($"{flight.Terminal.Id}");
             }
         }
     }
