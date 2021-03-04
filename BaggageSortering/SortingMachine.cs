@@ -54,7 +54,6 @@ namespace BaggageSorteringLib
                     Monitor.Pulse(ConveyorBelt);
                     Monitor.Wait(ConveyorBelt);
                     Monitor.Exit(ConveyorBelt);
-;
                     Thread.Sleep(200);
                 }
             }
