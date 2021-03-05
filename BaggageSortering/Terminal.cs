@@ -18,7 +18,7 @@ namespace BaggageSorteringLib
         public int Id { get; private set; }
         public bool IsOpen { get; private set; }
         public Queue<Luggage> Luggages { get; private set; }
-        public Flight Flight { get; private set; }
+        public Flight Flight { get; set; }
 
         public void Close()
         {
@@ -47,6 +47,15 @@ namespace BaggageSorteringLib
             else
             {
                 return $"{Id}";
+            }
+        }
+
+        public void LoadFlightLuggages()
+        {
+            if (Flight != null)
+            {
+                Flight.LoadWithLuggages(Luggages);
+                Luggages = new Queue<Luggage>();
             }
         }
     }

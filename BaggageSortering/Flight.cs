@@ -22,7 +22,7 @@ namespace BaggageSorteringLib
         public Flight(string name, int seats, DateTime arrival, DateTime departure, string destination)
         {
             Name = name;
-            //Terminal = null;
+            TerminalId = 0;
             Arrival = arrival;
             Departure = departure;
             Destination = destination;
@@ -37,7 +37,7 @@ namespace BaggageSorteringLib
         public static Flight None = new Flight("", 0, DateTime.MinValue, DateTime.MinValue, "");
 
         public string Name { get; private set; }
-        //public Terminal Terminal { get; private set; }
+        public int TerminalId { get; set; }
         public DateTime Arrival { get; private set; }
         public DateTime Departure { get; private set; }
         public string Destination { get; private set; }
@@ -102,6 +102,13 @@ namespace BaggageSorteringLib
                 //Terminal.Close();
             }
         }
+
+
+        public void LoadWithLuggages(Queue<Luggage> luggages)
+        {
+            Luggages = luggages;
+        }
+
 
         private void GenerateSeatNames()
         {

@@ -1,5 +1,6 @@
 ﻿using BaggageSorteringLib;
 using Engine;
+using System;
 
 static class AirportDraw
 {
@@ -82,7 +83,7 @@ static class AirportDraw
                 ConsoleEx.SetPosition(36, y + i + 3);
                 ConsoleEx.Write($"{flight.Name}");
                 ConsoleEx.SetPosition(48, y + i + 3);
-                //ConsoleEx.Write($"{flight.Terminal}");
+                ConsoleEx.Write($"{(Convert.ToBoolean(flight.TerminalId) ? flight.TerminalId.ToString() : "")}");
                 ConsoleEx.SetPosition(56, y + i + 3);
                 ConsoleEx.Write($"{flight.Status} {flight.GetCheckinAmount()}/{flight.Reservations.Count}");
             }

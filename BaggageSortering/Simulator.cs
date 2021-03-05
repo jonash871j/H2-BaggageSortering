@@ -87,7 +87,7 @@ namespace BaggageSorteringLib
                             if (reservation != null)
                             {
                                 // TODO: Fix gate
-                                CheckLuggageIn(counter.Id, new Luggage(rng.Next(1, 10), counter.Id, reservation));
+                                CheckLuggageIn(counter.Id, new Luggage(reservation.Flight.TerminalId, counter.Id, reservation));
                             }
                         }
                     }
@@ -97,6 +97,9 @@ namespace BaggageSorteringLib
                 FlightSchedule.UpdateStatuses(Time);
                 FlightSchedule.RemoveOldFlights(Time);
                 FlightSchedule.UpdateFlightScreen();
+                
+                
+                AssignFlightGates();
 
                 // Find flights there are ready for check in
                 List<Flight> flights = FlightSchedule.Flights.FindAll(f => f.IsReadyForCheckIn() == true);
@@ -132,6 +135,37 @@ namespace BaggageSorteringLib
                 // Update simulation time
                 Time.IsUpdateCycle = false;
                 Time.MoveTime();
+            }
+        }
+        private void AssignFlightGates()
+        {
+            List<Flight> flights = FlightSchedule.Flights.FindAll(f => f.Status == FlightStatus.FarAway);
+            foreach (Flight flight in flights)
+            {
+                if (flight.TerminalId == 0)
+                {
+                    Terminal terminal = Terminals.FirstOrDefault(t => t.Flight == null);
+                    if (terminal != null)
+                    {
+                        terminal.Flight = flight;
+                        flight.TerminalId = terminal.Id;
+                    }
+                }
+            }
+            foreach (Terminal terminal1 in Terminals)
+            {
+                if (terminal1.Flight != null)
+                {
+                    if (terminal1.Flight.Status == FlightStatus.Takeoff)
+                    {
+                        terminal1.Flight = null;
+                        terminal1.Close();
+                    }
+                    else if (terminal1.Flight.Status == FlightStatus.Refilling && terminal1.Luggages.Count > 0)
+                    {
+                        terminal1.LoadFlightLuggages();
+                    }
+                }
             }
         }
     }
