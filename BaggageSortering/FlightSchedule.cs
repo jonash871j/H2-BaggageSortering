@@ -19,6 +19,8 @@ namespace BaggageSorteringLib
         public List<Flight> FlightScreen { get; private set; }
         public List<Flight> Flights { get; private set; }
 
+        public MessageEvent NewReservation;
+
         public void AddFlight(Flight flight)
         {
             Flights.Add(flight);
@@ -28,6 +30,7 @@ namespace BaggageSorteringLib
             if (reservation.Flight.Status == FlightStatus.OpenForReservation)
             {
                 reservation.Flight.AddReservation(reservation);
+                NewReservation?.Invoke($"{reservation.Passenger.FirstName} has booked a ticket to {reservation.Flight.Destination}");
             }
             else
             {

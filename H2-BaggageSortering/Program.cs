@@ -13,7 +13,8 @@ class Program
 
     static Simulator simulator;
     static AutoGenerator autoGenerator;
-    static ConsoleBuffer infoBuffer = new ConsoleBuffer(12);
+    static ConsoleBuffer sortingMachineBuffer = new ConsoleBuffer(12);
+    static ConsoleBuffer reservationBuffer = new ConsoleBuffer(12);
     static FormState formState = FormState.AirportOverview;
 
     static Passenger passenger = new Passenger();
@@ -26,13 +27,17 @@ class Program
         simulator.IsAutoGenerationEnabled = true;
         simulator.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;
         simulator.SortingMachine.ProcessException += OnSortingMachineProcessException;
+        simulator.FlightSchedule.NewReservation += OnNewReservation;
         simulator.Start();
 
         autoGenerator = new AutoGenerator(simulator);
 
         // Creates advanced console
-        ConsoleEx.Create(100, 52);
-        ConsoleEx.SetFont("Terminal", 12, 16);
+
+        ColorPalette colorPalette = new ColorPalette();
+
+        ConsoleEx.Create(100, 66);
+        ConsoleEx.SetFont("Terminal", 8, 12);
 
         while (true)
         {
@@ -41,27 +46,32 @@ class Program
             // Shows current form state
             switch (formState)
             {
-                case FormState.AirportOverview      : AirportOverview();    break;
-                case FormState.PassengerCreation    : PassengerCreation();  break;
-                case FormState.ReservationCreation  : ReservationCreation();  break;
+                case FormState.AirportOverview: AirportOverview(); break;
+                case FormState.PassengerCreation: PassengerCreation(); break;
+                case FormState.ReservationCreation: ReservationCreation(); break;
             }
             simulator.Update();
 
             ConsoleEx.Update();
-            ConsoleEx.Clear();  
+            ConsoleEx.Clear();
         }
     }
 
     // Events ***************************************
     private static void OnSortingMachineProcessInfo(string msg)
     {
-        infoBuffer.WriteLine(msg);
+        sortingMachineBuffer.WriteLine(msg);
     }
     private static void OnSortingMachineProcessException(string msg)
     {
-        infoBuffer.WriteLine("\fc" + msg);
+        sortingMachineBuffer.WriteLine("\fc" + msg);
     }
-  
+    private static void OnNewReservation(string msg)
+    {
+        reservationBuffer.WriteLine(msg);
+    }
+
+
     // Form methods *******************************
     static void AirportOverview()
     {
@@ -70,7 +80,8 @@ class Program
         AirportDraw.ConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 12);
         AirportDraw.Terminals(simulator.Terminals, 13);
         AirportDraw.FlightSchedule(23, simulator.FlightSchedule);
-        AirportDraw.InfoBuffer(37, "SORTING MACHINE INFO", infoBuffer);
+        AirportDraw.InfoBuffer(37, "SORTING MACHINE INFO", sortingMachineBuffer);
+        AirportDraw.InfoBuffer(51, "RESERVATION INFO", reservationBuffer);
     }
     static void PassengerCreation()
     {
