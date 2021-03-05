@@ -11,7 +11,7 @@ static class AirportDraw
 
             if (luggage != null)
             {
-                ConsoleEx.WriteCharacter(i, y, '■', (byte)(luggage.TerminalId));
+                ConsoleEx.WriteCharacter(i, y, 'G', Color.Get((byte)(luggage.TerminalId), (byte)(luggage.CounterId)));
             }
         }
         ConsoleEx.SetPosition(conveyorBelt.Length + 3, y);
@@ -20,9 +20,11 @@ static class AirportDraw
     public static void Counters(Counter[] counters, int y)
     {
         ConsoleEx.SetPosition(0, y);
-        foreach (Counter counter in counters)
+        for (int i = 0; i < counters.Length; i++)
         {
-            ConsoleEx.WriteLine($"Counter {counter.Id}: IsReady {counter.IsReady()}");
+            Counter counter = counters[i];
+            ConsoleEx.WriteLine($"  Counter {counter.Id}  {(counter.IsOpen ? "open" : "")} {counter.Flight.Name} {counter.Flight.Destination}");
+            ConsoleEx.WriteCharacter(0, y + i, '■', (byte)counter.Id);
         }
     }
     public static void Terminals(Terminal[] terminals, int y)
@@ -32,7 +34,8 @@ static class AirportDraw
             Terminal terminal = terminals[i];
 
             ConsoleEx.SetPosition(0, y + i);
-            ConsoleEx.WriteLine($"Terminal {terminal.Id} \f{terminal.Id} = ");
+            ConsoleEx.WriteLine($"  Gate {terminal.Id}");
+            ConsoleEx.WriteCharacter(0, y + i, '■', (byte)terminal.Id);
 
             int j = 0;
             foreach (Luggage luggage in terminal.Luggages)
@@ -79,9 +82,9 @@ static class AirportDraw
                 ConsoleEx.SetPosition(36, y + i + 3);
                 ConsoleEx.Write($"{flight.Name}");
                 ConsoleEx.SetPosition(48, y + i + 3);
-                ConsoleEx.Write($"{flight.Terminal}");
+                //ConsoleEx.Write($"{flight.Terminal}");
                 ConsoleEx.SetPosition(56, y + i + 3);
-                ConsoleEx.Write($"{flight.Status}");
+                ConsoleEx.Write($"{flight.Status} {flight.GetCheckinAmount()}/{flight.Reservations.Count}");
             }
         }
     }

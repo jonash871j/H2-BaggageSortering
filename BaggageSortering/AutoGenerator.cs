@@ -25,13 +25,12 @@ namespace BaggageSorteringLib
             {
                 arrival = Simulator.FlightSchedule.Flights.OrderByDescending(f => f.Arrival)
                     .FirstOrDefault().Arrival;
-                arrival = arrival.AddMinutes(rng.Next(0, 30));
+                arrival = arrival.AddMinutes(rng.Next(30, 120));
             }
 
             return new Flight(
                 name: $"F-{rng.Next(0, 10000)}",
                 seats: rng.Next(100, 300),
-                terminal: Simulator.Terminals[rng.Next(0, Simulator.Terminals.Length)],
                 arrival: arrival,
                 departure: arrival.AddMinutes(60),
                 destination: Data.GetRandomCity()
@@ -48,15 +47,21 @@ namespace BaggageSorteringLib
                 phoneNumber: "+45" + rng.Next(10000000, 99999999),
                 address: $"{Data.GetRandomCity()} {Data.GetRandomStreet()} {rng.Next(1, 1000)}"
             );
-            List<Flight> flights = Simulator.FlightSchedule.Flights;
+            List<Flight> flights = Simulator.FlightSchedule.Flights.FindAll(
+                f => f.Status == FlightStatus.OpenForReservation && f.IsSeatsAvailible());
 
-            Reservation reservation = new Reservation(
-                passenger: passenger,
-                flight: flights[rng.Next(0, flights.Count)],
-                seat: "dont care"
-            );
-
-            return reservation;
+            if (flights.Count > 0)
+            {
+                return new Reservation(
+                    passenger: passenger,
+                    flight: flights[rng.Next(0, flights.Count)],
+                    seat: "dont care"
+                );
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

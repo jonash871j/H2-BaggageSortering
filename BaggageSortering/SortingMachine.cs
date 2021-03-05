@@ -41,7 +41,7 @@ namespace BaggageSorteringLib
 
                     foreach (Counter counter in Counters)
                     {
-                        if (counter.IsReady() && ConveyorBelt.IsSpace())
+                        if (counter.IsLuggageSlotAvailable() && ConveyorBelt.IsSpace())
                         {
                             Luggage luggage = counter.GetLuggageFromCounter();
                             ConveyorBelt.Push(luggage);

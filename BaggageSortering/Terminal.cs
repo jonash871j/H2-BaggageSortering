@@ -32,6 +32,10 @@ namespace BaggageSorteringLib
         public void AddLuggage(Luggage luggage)
         {
             Luggages.Enqueue(luggage);
+            if (Luggages.Count > 100)
+            {
+                Luggages.Clear();
+            }
         }
 
         public override string ToString()

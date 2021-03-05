@@ -31,7 +31,7 @@ class Program
         autoGenerator = new AutoGenerator(simulator);
 
         // Creates advanced console
-        ConsoleEx.Create(80, 48);
+        ConsoleEx.Create(100, 52);
         ConsoleEx.SetFont("Terminal", 12, 16);
 
         while (true)
@@ -65,19 +65,12 @@ class Program
     // Form methods *******************************
     static void AirportOverview()
     {
-        // Testing
-        if (Input.KeyPressed((Key)('A'))) simulator.CheckLuggageIn(1, new Luggage(1, autoGenerator.CreateRandomReservation()));
-        if (Input.KeyPressed((Key)('S'))) simulator.CheckLuggageIn(2, new Luggage(2, autoGenerator.CreateRandomReservation()));
-        if (Input.KeyPressed((Key)('D'))) simulator.CheckLuggageIn(3, new Luggage(3, autoGenerator.CreateRandomReservation()));
-        if (Input.KeyPressed((Key)('F'))) simulator.CheckLuggageIn(4, new Luggage(4, autoGenerator.CreateRandomReservation()));
-        if (Input.KeyPressed((Key)('G'))) simulator.CheckLuggageIn(5, new Luggage(5, autoGenerator.CreateRandomReservation()));
-
         ConsoleEx.WriteLine($"- \faAIRPOT OVERVIEW \f7| \feSPEED {simulator.Time.Speed}x \f7| \ff{simulator.Time.DateTime.ToShortTimeString()}");
         AirportDraw.Counters(simulator.Counters, 1);
-        AirportDraw.ConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 8);
-        AirportDraw.Terminals(simulator.Terminals, 9);
-        AirportDraw.FlightSchedule(19, simulator.FlightSchedule);
-        AirportDraw.InfoBuffer(33, "SORTING MACHINE INFO", infoBuffer);
+        AirportDraw.ConveyorBelt(simulator.SortingMachine.ConveyorBelt, " - Sorting system's conveyor belt", 12);
+        AirportDraw.Terminals(simulator.Terminals, 13);
+        AirportDraw.FlightSchedule(23, simulator.FlightSchedule);
+        AirportDraw.InfoBuffer(37, "SORTING MACHINE INFO", infoBuffer);
     }
     static void PassengerCreation()
     {

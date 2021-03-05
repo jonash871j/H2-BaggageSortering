@@ -10,22 +10,16 @@ namespace BaggageSorteringLib
         public Simulator()
         {
             Time = new SimulationTime();
-            Counters = new Counter[]
+
+            Counters = new Counter[10];
+            Terminals = new Terminal[10];
+
+            for (int i = 0; i < 10; i++)
             {
-                new Counter(1),
-                new Counter(2),
-                new Counter(3),
-                new Counter(4),
-                new Counter(5),
-            };
-            Terminals = new Terminal[]
-            {
-                new Terminal(1), 
-                new Terminal(2), 
-                new Terminal(3), 
-                new Terminal(4), 
-                new Terminal(5), 
-            };
+                Counters[i] = new Counter(i + 1);
+                Terminals[i] = new Terminal(i + 1);
+            }
+
             SortingMachine = new SortingMachine(Time, Counters, Terminals);
             FlightSchedule = new FlightSchedule(12);
 
@@ -52,6 +46,7 @@ namespace BaggageSorteringLib
         {
             Counter counter = Counters.FirstOrDefault(c => c.Id == counterId);
             counter.CheckLuggageIn(luggage);
+            luggage.Reservation.IsCheckedIn = true;
         }
         public void AddReservation(Reservation reservation)
         {
@@ -65,9 +60,36 @@ namespace BaggageSorteringLib
                 if (IsAutoGenerationEnabled)
                 {
                     // Creates random flights
-                    while (FlightSchedule.Flights.Count < 100)
+                    while (FlightSchedule.Flights.Count < 1000)
                     {
                         FlightSchedule.AddFlight(autoGenerator.CreateRandomFlight());
+                    }
+
+
+                    // Creates 100 random reservations
+                    for (int i = 0; i < 100; i++)
+                    {
+                        Reservation reservation = autoGenerator.CreateRandomReservation();
+                        if (reservation != null)
+                        {
+                            AddReservation(reservation);
+                        }
+                    }
+
+                    // 1. Finds all counters there is open
+                    // 2. Checks people in if they are not
+                    foreach (Counter counter in Counters)
+                    {
+                        if ((counter.IsOpen) && (!counter.IsLuggageSlotAvailable()))
+                        {
+                            Reservation reservation = counter.Flight.Reservations.Find(r => !r.IsCheckedIn);
+
+                            if (reservation != null)
+                            {
+                                // TODO: Fix gate
+                                CheckLuggageIn(counter.Id, new Luggage(rng.Next(1, 10), counter.Id, reservation));
+                            }
+                        }
                     }
                 }
 
@@ -75,6 +97,37 @@ namespace BaggageSorteringLib
                 FlightSchedule.UpdateStatuses(Time);
                 FlightSchedule.RemoveOldFlights(Time);
                 FlightSchedule.UpdateFlightScreen();
+
+                // Find flights there are ready for check in
+                List<Flight> flights = FlightSchedule.Flights.FindAll(f => f.IsReadyForCheckIn() == true);
+                foreach (Flight flight in flights)
+                {
+                    Counter counter = Counters.Where(c => c.IsOpen == false).FirstOrDefault();
+
+                    // If flight already has a counter, skip...
+                    if (Counters.Any(c => c.Flight == flight))
+                    {
+                        continue;
+                    }
+
+                    // If counter is available
+                    // Update counter flight screen and open counter
+                    if (counter != null)
+                    {
+                        counter.UpdateFlight(flight);
+                        counter.Open();
+                        continue;
+                    }
+                }
+
+                // Closes counter if check in period is done
+                foreach (Counter counter in Counters)
+                {
+                    if (!counter.Flight.IsReadyForCheckIn())
+                    {
+                        counter.Close();
+                    }
+                }
 
                 // Update simulation time
                 Time.IsUpdateCycle = false;

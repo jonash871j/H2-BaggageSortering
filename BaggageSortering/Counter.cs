@@ -12,20 +12,28 @@ namespace BaggageSorteringLib
         {
             Id = id;
             Luggage = null;
-            IsOpen = true;
+            Flight = Flight.None;
+            IsOpen = false;
         }
 
         public int Id { get; private set; }
         public Luggage Luggage { get; private set; }
+        public Flight Flight { get; private set; }
         public bool IsOpen { get; private set; }
 
         public void Close()
         {
             IsOpen = false;
+            Flight = Flight.None;
         }
         public void Open()
         {
             IsOpen = true;
+        }
+
+        public void UpdateFlight(Flight flight)
+        {
+            Flight = flight;
         }
 
         public void CheckLuggageIn(Luggage luggage)
@@ -45,7 +53,7 @@ namespace BaggageSorteringLib
             Luggage = null;
             return luggage;
         }
-        public bool IsReady()
+        public bool IsLuggageSlotAvailable()
         {
             return (IsOpen) && (Luggage != null);
         }

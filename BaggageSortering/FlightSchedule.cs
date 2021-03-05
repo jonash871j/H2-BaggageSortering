@@ -25,8 +25,14 @@ namespace BaggageSorteringLib
         }
         public void AddReservation(Reservation reservation)
         {
-            Flights.First(x => x.Name == reservation.Flight.Name)
-                .Reservations.Add(reservation);
+            if (reservation.Flight.Status == FlightStatus.OpenForReservation)
+            {
+                reservation.Flight.AddReservation(reservation);
+            }
+            else
+            {
+                // Reservations for current flight is closed
+            }
         }
 
         public void UpdateStatuses(SimulationTime time)

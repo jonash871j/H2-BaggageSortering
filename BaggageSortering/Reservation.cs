@@ -13,10 +13,12 @@ namespace BaggageSorteringLib
             Passenger =  passenger;
             Flight = flight;
             Seat = seat;
+            IsCheckedIn = false;
         }
 
         public Passenger Passenger { get; private set; }
         public Flight Flight { get; private set; }
         public string Seat { get; private set; }
+        public bool IsCheckedIn { get; set; }
     }
 }
