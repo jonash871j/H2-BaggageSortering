@@ -8,11 +8,11 @@ namespace BaggageSorteringLib
 
     public class SortingMachine
     {
-        public SortingMachine(SimulationTime time, Counter[] counters, Terminal[] terminals)
+        public SortingMachine(SimulationTime time, CheckinArea checkinArea, TerminalsArea terminalsArea)
         {
             Time = time;
-            Counters = counters;
-            Terminals = terminals;
+            Counters = checkinArea.Counters;
+            Terminals = terminalsArea.Terminals;
             ConveyorBelt = new ConveyorBelt<Luggage>(20);
         }
 
@@ -47,14 +47,14 @@ namespace BaggageSorteringLib
                             ConveyorBelt.Push(luggage);
                             ConveyorBelt.MoveForward();
                             ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now on the conveyor belt to terminal {luggage.TerminalId}");
-                            Thread.Sleep(250 / Time.Speed);
+                            Thread.Sleep(100 / Time.Speed);
                         }
                     }
 
                     Monitor.Pulse(ConveyorBelt);
                     Monitor.Wait(ConveyorBelt);
                     Monitor.Exit(ConveyorBelt);
-                    Thread.Sleep(250 / Time.Speed);
+                    Thread.Sleep(100 / Time.Speed);
                 }
             }
             catch (Exception ex)

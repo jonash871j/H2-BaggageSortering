@@ -6,37 +6,37 @@ using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
-    public class AutoGenerator
+    public static class AutoGenerator
     {
-        public AutoGenerator(Simulator simulator)
-        {
-            Simulator = simulator;
-        }
+        //public AutoGenerator(Simulator simulator)
+        //{
+        //    Simulator = simulator;
+        //}
 
         private static Random rng = new Random();
 
-        public Simulator Simulator { get; private set; }
+        //public Simulator Simulator { get; private set; }
 
-        public Flight CreateRandomFlight()
+        public static Flight CreateRandomFlight(FlightSchedule flightSchedule)
         {
             // Creates arrival based on lates depature times in flight scheduler
-            DateTime arrival = Simulator.Time.DateTime.AddMinutes(rng.Next(15, 60));
-            if (Simulator.FlightSchedule.Flights.Count > 0)
+            DateTime arrival = flightSchedule.Time.DateTime.AddMinutes(rng.Next(0, 60));
+            if (flightSchedule.Flights.Count > 0)
             {
-                arrival = Simulator.FlightSchedule.Flights.OrderByDescending(f => f.Arrival)
+                arrival = flightSchedule.Flights.OrderByDescending(f => f.Arrival)
                     .FirstOrDefault().Arrival;
-                arrival = arrival.AddMinutes(rng.Next(30, 120));
+                arrival = arrival.AddMinutes(rng.Next(0, 60));
             }
 
             return new Flight(
                 name: $"F-{rng.Next(0, 10000)}",
-                seats: rng.Next(100, 300),
+                seatsAmount: rng.Next(100, 300),
                 arrival: arrival,
                 departure: arrival.AddMinutes(60),
                 destination: Data.GetRandomCity()
             );
         }
-        public Reservation CreateRandomReservation()
+        public static Reservation CreateRandomReservation(FlightSchedule flightSchedule)
         {
             string firstName = Data.GetRandomName();
 
@@ -47,15 +47,14 @@ namespace BaggageSorteringLib
                 phoneNumber: "+45" + rng.Next(10000000, 99999999),
                 address: $"{Data.GetRandomCity()} {Data.GetRandomStreet()} {rng.Next(1, 1000)}"
             );
-            List<Flight> flights = Simulator.FlightSchedule.Flights.FindAll(
+            List<Flight> flights = flightSchedule.Flights.FindAll(
                 f => f.Status == FlightStatus.OpenForReservation && f.IsSeatsAvailible());
 
             if (flights.Count > 0)
             {
                 return new Reservation(
                     passenger: passenger,
-                    flight: flights[rng.Next(0, flights.Count)],
-                    seat: "dont care"
+                    flight: flights[rng.Next(0, flights.Count)]
                 );
             }
             else

@@ -23,7 +23,7 @@ namespace BaggageSorteringLib
         private readonly Timer timer;
         private int _speed;
 
-        internal bool IsUpdateCycle { get; set; } 
+        internal bool IsUpdateCycle { get; private set; } 
         public DateTime DateTime { get; private set; }
         public int Speed
         {
@@ -38,6 +38,7 @@ namespace BaggageSorteringLib
         public void MoveTime()
         {
             DateTime = DateTime.AddMinutes(1);
+            IsUpdateCycle = false;
         }
 
         private void OnTick(object sender, ElapsedEventArgs e)

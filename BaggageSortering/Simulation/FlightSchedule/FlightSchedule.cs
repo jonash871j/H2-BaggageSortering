@@ -8,13 +8,15 @@ namespace BaggageSorteringLib
 {
     public class FlightSchedule
     {
-        public FlightSchedule(int flightScreenLength)
+        public FlightSchedule(SimulationTime time, int flightScreenLength)
         {
+            Time = time;
             FlightScreenLength = flightScreenLength;
             FlightScreen = new List<Flight>();
             Flights = new List<Flight>();
         }
 
+        public SimulationTime Time { get; private set; }
         public int FlightScreenLength { get; private set; }
         public List<Flight> FlightScreen { get; private set; }
         public List<Flight> Flights { get; private set; }
@@ -38,18 +40,37 @@ namespace BaggageSorteringLib
             }
         }
 
-        public void UpdateStatuses(SimulationTime time)
+        public void UpdateStatuses()
         {
             for (int i = 0; i < Flights.Count; i++)
             {
-                Flights[i].UpdateFlightStatus(time);
+                Flights[i].UpdateFlightStatus(Time);
             }
         }
-        public void RemoveOldFlights(SimulationTime time)
+        public void RemoveOldFlights()
         {
             if (Flights.Count > 0)
             {
-                Flights.RemoveAll(f => f.Departure < time.DateTime);
+                Flights.RemoveAll(f => f.Departure < Time.DateTime);
+            }
+        }
+        public void GenerateRandomFlights()
+        {
+            while (Flights.Count < 1000)
+            {
+                AddFlight(AutoGenerator.CreateRandomFlight(this));
+            }
+        }
+        public void GenerateRandomReservations()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                Reservation reservation = AutoGenerator.CreateRandomReservation(this);
+
+                if (reservation != null)
+                {
+                    AddReservation(reservation);
+                }
             }
         }
 

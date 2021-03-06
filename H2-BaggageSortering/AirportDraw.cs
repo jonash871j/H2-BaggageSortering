@@ -12,38 +12,48 @@ static class AirportDraw
 
             if (luggage != null)
             {
-                ConsoleEx.WriteCharacter(i, y, 'G', Color.Get((byte)(luggage.TerminalId), (byte)(luggage.CounterId)));
+                ConsoleEx.WriteCharacter(i, y, 'G', Color.Get((byte)(luggage.TerminalId+1), (byte)(luggage.CounterId+1)));
             }
         }
         ConsoleEx.SetPosition(conveyorBelt.Length + 3, y);
         ConsoleEx.WriteLine(name);
     }
-    public static void Counters(Counter[] counters, int y)
+    public static void CheckinArea(CheckinArea checkinArea, int y)
     {
+        Counter[] counters = checkinArea.Counters;
+
         ConsoleEx.SetPosition(0, y);
         for (int i = 0; i < counters.Length; i++)
         {
             Counter counter = counters[i];
             ConsoleEx.WriteLine($"  Counter {counter.Id}  {(counter.IsOpen ? "open" : "")} {counter.Flight.Name} {counter.Flight.Destination}");
-            ConsoleEx.WriteCharacter(0, y + i, '■', (byte)counter.Id);
+            ConsoleEx.WriteCharacter(0, y + i, '█', (byte)(counter.Id+1));
         }
     }
-    public static void Terminals(Terminal[] terminals, int y)
+    public static void TerminalsArea(TerminalsArea terminalsArea, int y)
     {
+        Terminal[] terminals = terminalsArea.Terminals;
+
         for (int i = 0; i < terminals.Length; i++)
         {
             Terminal terminal = terminals[i];
 
             ConsoleEx.SetPosition(0, y + i);
             ConsoleEx.WriteLine($"  Gate {terminal.Id}");
-            ConsoleEx.WriteCharacter(0, y + i, '■', (byte)terminal.Id);
+            ConsoleEx.WriteCharacter(0, y + i, 'G', (byte)(terminal.Id+1));
 
-            int j = 0;
-            foreach (Luggage luggage in terminal.Luggages)
+            int amount = terminal.Luggages.Count;
+            int max = amount;
+            if (max > 50)
             {
-                ConsoleEx.WriteCharacter(j + 14, y + i, '■', (byte)(terminal.Id));
-                j++;
+                max = 50;
             }
+            for (int j = 0; j < max; j++)
+            {
+                ConsoleEx.WriteCharacter(j + 14, y + i, '■', (byte)(terminal.Id+1));
+            }
+            ConsoleEx.SetPosition(max + 14, y + i);
+            ConsoleEx.Write($" : {amount}");
         }
     }
     public static void InfoBuffer(int y, string title, ConsoleBuffer buffer)
@@ -70,6 +80,8 @@ static class AirportDraw
         ConsoleEx.Write("\f3GATE");
         ConsoleEx.SetPosition(56, y + 2);
         ConsoleEx.Write("\f3STATUS");
+        ConsoleEx.SetPosition(72, y + 2);
+        ConsoleEx.Write("\f3CHECKIN/BOOKED/MAX");
 
         if (flightSchedule.FlightScreen.Count > 0)
         {
@@ -83,9 +95,16 @@ static class AirportDraw
                 ConsoleEx.SetPosition(36, y + i + 3);
                 ConsoleEx.Write($"{flight.Name}");
                 ConsoleEx.SetPosition(48, y + i + 3);
-                ConsoleEx.Write($"{(Convert.ToBoolean(flight.TerminalId) ? flight.TerminalId.ToString() : "")}");
+                if (flight.Terminal != null)
+                {
+                    ConsoleEx.Write(flight.Terminal.Id.ToString());
+                }
+
                 ConsoleEx.SetPosition(56, y + i + 3);
-                ConsoleEx.Write($"{flight.Status} {flight.GetCheckinAmount()}/{flight.Reservations.Count}");
+                ConsoleEx.Write(flight.Status.ToString());
+     
+                ConsoleEx.SetPosition(72, y + i + 3);
+                ConsoleEx.Write($"{flight.GetCheckinAmount()}/{flight.Reservations.Count}/{flight.SeatsAmount}");
             }
         }
     }

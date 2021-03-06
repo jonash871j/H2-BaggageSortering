@@ -41,21 +41,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoGenerator.cs" />
-    <Compile Include="ConveyorBelt.cs" />
-    <Compile Include="Counter.cs" />
-    <Compile Include="Data.cs" />
-    <Compile Include="FlightSchedule.cs" />
-    <Compile Include="Interfaces\IOpenClose.cs" />
-    <Compile Include="Luggage.cs" />
-    <Compile Include="Passenger.cs" />
-    <Compile Include="Flight.cs" />
+    <Compile Include="Simulation\AutoGeneration\AutoGenerator.cs" />
+    <Compile Include="Simulation\BaggageSorting\ConveyorBelt.cs" />
+    <Compile Include="Simulation\BaggageSorting\Counter.cs" />
+    <Compile Include="Simulation\BaggageSorting\CheckinArea.cs" />
+    <Compile Include="Simulation\AutoGeneration\Data.cs" />
+    <Compile Include="Simulation\FlightSchedule\FlightSchedule.cs" />
+    <Compile Include="Simulation\BaggageSorting\IOpenClose.cs" />
+    <Compile Include="Simulation\Reservation\Luggage.cs" />
+    <Compile Include="Simulation\Reservation\Passenger.cs" />
+    <Compile Include="Simulation\FlightSchedule\Flight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reservation.cs" />
-    <Compile Include="Simulator.cs" />
-    <Compile Include="SortingMachine.cs" />
-    <Compile Include="Terminal.cs" />
-    <Compile Include="SimulationTime.cs" />
+    <Compile Include="Simulation\Reservation\Reservation.cs" />
+    <Compile Include="Simulation\Simulator.cs" />
+    <Compile Include="Simulation\BaggageSorting\SortingMachine.cs" />
+    <Compile Include="Simulation\BaggageSorting\Terminal.cs" />
+    <Compile Include="Simulation\SimulationTime.cs" />
+    <Compile Include="Simulation\BaggageSorting\TerminalsArea.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Cities.txt">
@@ -68,5 +70,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
