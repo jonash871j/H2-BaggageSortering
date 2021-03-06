@@ -86,7 +86,6 @@ namespace BaggageSorteringLib
 
                             if (reservation != null)
                             {
-                                // TODO: Fix gate
                                 CheckLuggageIn(counter.Id, new Luggage(reservation.Flight.TerminalId, counter.Id, reservation));
                             }
                         }
