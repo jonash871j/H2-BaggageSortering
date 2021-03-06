@@ -11,21 +11,25 @@ namespace BaggageSorteringLib
         public CheckinArea(int counterAmount)
         {
             Counters = new Counter[counterAmount];
-            for (int i = 0; i < counterAmount; i++)
-            {
-                Counters[i] = new Counter(id: i);
-            }
+            Clear();
         }
 
         public Counter[] Counters { get; private set; }
 
-        public void Checkin(Luggage luggage)
+        internal void Clear()
+        {
+            for (int i = 0; i < Counters.Length; i++)
+            {
+                Counters[i] = new Counter(id: i);
+            }
+        }
+        internal void Checkin(Luggage luggage)
         {
             Counter counter = Counters.FirstOrDefault(c => c.Id == luggage.CounterId);
             counter.CheckLuggageIn(luggage);
             luggage.Reservation.IsCheckedIn = true;
         }
-        public void UpdateAutoCheckinProcess()
+        internal void UpdateAutoCheckin()
         {
             // Finds all counters there is open
             foreach (Counter counter in Counters)
@@ -44,8 +48,7 @@ namespace BaggageSorteringLib
                 }
             }
         }
-
-        public void OpenCountersForIncommingFlights(FlightSchedule flightSchedule)
+        internal void OpenCountersForIncommingFlights(FlightSchedule flightSchedule)
         {
             // Find flights there are ready for check in
             List<Flight> flights = flightSchedule.Flights.FindAll(f => f.IsReadyForCheckIn() == true);
@@ -69,8 +72,7 @@ namespace BaggageSorteringLib
                 }
             }
         }
-
-        public void CloseExpiredCounters()
+        internal void CloseExpiredCounters()
         {
             // Closes counter if checkin period is done
             foreach (Counter counter in Counters)

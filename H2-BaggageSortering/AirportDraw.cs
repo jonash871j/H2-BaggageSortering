@@ -80,32 +80,30 @@ static class AirportDraw
         ConsoleEx.Write("\f3GATE");
         ConsoleEx.SetPosition(56, y + 2);
         ConsoleEx.Write("\f3STATUS");
-        ConsoleEx.SetPosition(72, y + 2);
+        ConsoleEx.SetPosition(80, y + 2);
         ConsoleEx.Write("\f3CHECKIN/BOOKED/MAX");
 
-        if (flightSchedule.FlightScreen.Count > 0)
+        for (int i = 0; i < flightSchedule.FlightScreen.Count; i++)
         {
-            for (int i = 0; i < flightSchedule.FlightScreen.Count; i++)
-            {
-                Flight flight = flightSchedule.FlightScreen[i];
-                ConsoleEx.SetPosition(2, y + i + 3);
-                ConsoleEx.Write($"{flight.Departure.ToString("HH:mm")}");
-                ConsoleEx.SetPosition(16, y + i + 3);
-                ConsoleEx.Write($"{flight.Destination}");
-                ConsoleEx.SetPosition(36, y + i + 3);
-                ConsoleEx.Write($"{flight.Name}");
-                ConsoleEx.SetPosition(48, y + i + 3);
-                if (flight.Terminal != null)
-                {
-                    ConsoleEx.Write(flight.Terminal.Id.ToString());
-                }
+            Flight flight = flightSchedule.FlightScreen[i];
 
-                ConsoleEx.SetPosition(56, y + i + 3);
-                ConsoleEx.Write(flight.Status.ToString());
-     
-                ConsoleEx.SetPosition(72, y + i + 3);
-                ConsoleEx.Write($"{flight.GetCheckinAmount()}/{flight.Reservations.Count}/{flight.SeatsAmount}");
+            ConsoleEx.SetPosition(2, y + i + 3);
+            ConsoleEx.Write($"{flight.Departure.ToString("HH:mm")}");
+            ConsoleEx.SetPosition(16, y + i + 3);
+            ConsoleEx.Write($"{flight.Destination}");
+            ConsoleEx.SetPosition(36, y + i + 3);
+            ConsoleEx.Write($"{flight.Name}");
+            ConsoleEx.SetPosition(48, y + i + 3);
+            if (flight.Terminal != null)
+            {
+                ConsoleEx.Write(flight.Terminal.Id.ToString());
             }
+
+            ConsoleEx.SetPosition(56, y + i + 3);
+            ConsoleEx.Write(flight.Status.ToString());
+     
+            ConsoleEx.SetPosition(80, y + i + 3);
+            ConsoleEx.Write($"{flight.GetCheckinAmount()}/{flight.Reservations.Count}/{flight.SeatsAmount}");
         }
     }
 }

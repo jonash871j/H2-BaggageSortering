@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace BaggageSorteringLib
 {
-    public delegate void MessageEvent(string msg);
-
     public class SortingMachine
     {
         public SortingMachine(SimulationTime time, CheckinArea checkinArea, TerminalsArea terminalsArea)
@@ -16,80 +15,78 @@ namespace BaggageSorteringLib
             ConveyorBelt = new ConveyorBelt<Luggage>(20);
         }
 
-        public SimulationTime Time { get; private set; }
-        public Counter[] Counters { get; private set; }
-        public Terminal[] Terminals { get; private set; }
+        private static readonly Random rng = new Random();
+        private readonly SimulationTime Time;
+        private readonly Counter[] Counters;
+        private readonly Terminal[] Terminals;
+        private bool isClearRequested = false;
+
         public ConveyorBelt<Luggage> ConveyorBelt { get; private set; }
         public MessageEvent ProcessInfo { get; set; }
-        public MessageEvent ProcessException { get; set; }
+        public MessageEvent ProcessExceptionInfo { get; set; }
 
-        public void Start()
+        internal void Start()
         {
-            Thread counterToSorterThread = new Thread(CounterToSorterProcess);
-            Thread sorterToTerminalThread = new Thread(SorterToTerminalProcess);
-            counterToSorterThread.Start();
-            sorterToTerminalThread.Start();
+            Thread sorterThread = new Thread(UpdateSorterProcess);
+            sorterThread.Start();
         }
-
-        public void CounterToSorterProcess()
+        internal void Clear()
         {
+            isClearRequested = true;
+        }
+        
+        private void UpdateSorterProcess()
+        {
+            ProcessInfo?.Invoke("Sorting machine has started...");
+
             try
             {
                 while (true)
                 {
-                    Monitor.Enter(ConveyorBelt);
+                    UpdateCounterToSorterProcess();
+                    UpdateSorterToTerminalProcess();
+                    Thread.Sleep(256 / Time.Speed);
 
-                    foreach (Counter counter in Counters)
+                    if (isClearRequested)
                     {
-                        if (counter.IsLuggageSlotAvailable() && ConveyorBelt.IsSpace())
-                        {
-                            Luggage luggage = counter.GetLuggageFromCounter();
-                            ConveyorBelt.Push(luggage);
-                            ConveyorBelt.MoveForward();
-                            ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now on the conveyor belt to terminal {luggage.TerminalId}");
-                            Thread.Sleep(100 / Time.Speed);
-                        }
+                        ConveyorBelt.Clear();
+                        isClearRequested = false;
                     }
-
-                    Monitor.Pulse(ConveyorBelt);
-                    Monitor.Wait(ConveyorBelt);
-                    Monitor.Exit(ConveyorBelt);
-                    Thread.Sleep(100 / Time.Speed);
                 }
             }
             catch (Exception ex)
             {
-                ProcessException?.Invoke("Thread CTS crashed: " + ex.Message);
+                ProcessExceptionInfo?.Invoke("Thread USP crashed: " + ex.Message);
             }
         }
-        public void SorterToTerminalProcess()
+
+        private void UpdateCounterToSorterProcess()
         {
-            try
+            if (ConveyorBelt.IsSpace())
             {
-                while (true)
+                List<Counter> counters = Counters.Where(c => c.IsLuggageSlotAvailable()).ToList();
+
+                if (counters.Count != 0)
                 {
-                    Monitor.Enter(ConveyorBelt);
-
-                    if (!ConveyorBelt.IsPullEmpty())
-                    {
-                        Luggage luggage = ConveyorBelt.Pull();
-                        Terminal terminal = Terminals.FirstOrDefault(t => t.Id == luggage.TerminalId);
-                        terminal.AddLuggage(luggage);
-                        ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now in terminal {terminal.Id}");
-                    }
-                    else
-                    {
-                        ConveyorBelt.MoveForward();
-                    }
-
-                    Monitor.Pulse(ConveyorBelt);
-                    Monitor.Wait(ConveyorBelt);
-                    Monitor.Exit(ConveyorBelt);
+                    Counter counter = counters[rng.Next(0, counters.Count)];
+                    Luggage luggage = counter.GetLuggageFromCounter();
+                    ConveyorBelt.Push(luggage);
+                    ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now on the conveyor belt to terminal {luggage.TerminalId}");
                 }
             }
-            catch (Exception ex)
+        }
+        private void UpdateSorterToTerminalProcess()
+        {
+            if (!ConveyorBelt.IsPullEmpty())
             {
-                ProcessException?.Invoke("Thread STT crashed: " + ex.Message);
+                Luggage luggage = ConveyorBelt.Pull();
+                Terminal terminal = Terminals.FirstOrDefault(t => t.Id == luggage.TerminalId);
+                terminal.AddLuggage(luggage);
+                ProcessInfo?.Invoke($"Luggage owned by {luggage.Reservation.Passenger.FirstName} is now in terminal {terminal.Id}");
+            }
+            else
+            {
+                ConveyorBelt.MoveForward();
             }
         }
     }

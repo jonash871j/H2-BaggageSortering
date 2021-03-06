@@ -12,11 +12,7 @@ namespace BaggageSorteringLib
         {
             Length = length;
             Buffer = new T[length];
-            
-            for (int i = 0; i < Length; i++)
-            {
-                Buffer[i] = default;
-            }
+            Clear();
         }
 
         public T this[int i]
@@ -78,6 +74,13 @@ namespace BaggageSorteringLib
                     Buffer[i] = Buffer[i - 1];
                 }
                 Buffer[0] = default;
+            }
+        }
+        public void Clear()
+        {
+            for (int i = 0; i < Length; i++)
+            {
+                Buffer[i] = default;
             }
         }
     }

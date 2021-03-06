@@ -16,65 +16,97 @@ namespace BaggageSorteringLib
             Flights = new List<Flight>();
         }
 
+        private static Random rng = new Random();
+
         public SimulationTime Time { get; private set; }
         public int FlightScreenLength { get; private set; }
         public List<Flight> FlightScreen { get; private set; }
         public List<Flight> Flights { get; private set; }
 
-        public MessageEvent NewReservation;
+        public MessageEvent ReservationInfo;
+        public MessageEvent AutoReservationsInfo;
+        public MessageEvent FlightInfo;
+        public MessageEvent BadFlightInfo;
 
-        public void AddFlight(Flight flight)
+        internal void Clear()
+        {
+            FlightScreen.Clear();
+            Flights.Clear();
+        }
+
+        internal void AddFlight(Flight flight)
         {
             Flights.Add(flight);
         }
-        public void AddReservation(Reservation reservation)
+        internal void AddReservation(Reservation reservation)
         {
             if (reservation.Flight.Status == FlightStatus.OpenForReservation)
             {
                 reservation.Flight.AddReservation(reservation);
-                NewReservation?.Invoke($"{reservation.Passenger.FirstName} has booked a ticket to {reservation.Flight.Destination}");
+                ReservationInfo?.Invoke($"{reservation.Passenger.FirstName} has booked a ticket to {reservation.Flight.Destination}");
             }
             else
             {
-                // Reservations for current flight is closed
+                throw new Exception("Reservation failed, flight is full!");
             }
         }
 
-        public void UpdateStatuses()
+        internal void UpdateStatuses()
         {
             for (int i = 0; i < Flights.Count; i++)
             {
                 Flights[i].UpdateFlightStatus(Time);
             }
         }
-        public void RemoveOldFlights()
+        internal void RemoveOldFlights()
         {
             if (Flights.Count > 0)
             {
                 Flights.RemoveAll(f => f.Departure < Time.DateTime);
             }
         }
-        public void GenerateRandomFlights()
+
+        internal void GenerateRandomFlights(int bustleLevel, bool isPreBookedWithRandomAmount)
         {
+            if (bustleLevel <= 0)
+            {
+                bustleLevel = 1;
+            }
+
             while (Flights.Count < 1000)
             {
-                AddFlight(AutoGenerator.CreateRandomFlight(this));
-            }
-        }
-        public void GenerateRandomReservations()
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                Reservation reservation = AutoGenerator.CreateRandomReservation(this);
+                DateTime startArrival = Time.DateTime;
 
-                if (reservation != null)
+                if (Flights.Count > 0)
                 {
-                    AddReservation(reservation);
+                    startArrival = Flights.OrderByDescending(f => f.Arrival).FirstOrDefault().Arrival;
                 }
+
+                Flight flight = AutoGenerator.CreateRandomFlight(startArrival, 0, 600 / bustleLevel);
+
+                if (isPreBookedWithRandomAmount)
+                {
+                    int minSeats = bustleLevel * 10;
+                    if (minSeats > flight.SeatsAmount)
+                    {
+                        minSeats = flight.SeatsAmount;
+                    }
+                    int amount = rng.Next(minSeats, flight.SeatsAmount);
+
+                    for (int i = 0; i < amount; i++)
+                    {
+                        AddReservation(AutoGenerator.CreateRandomReservation(flight));
+                    }
+                    AutoReservationsInfo?.Invoke($"{amount} auto generated people has made a reservation on {flight.Name}");
+                }
+
+                flight.FlightInfo = FlightInfo;
+                flight.BadFlightInfo = BadFlightInfo;
+                AddFlight(flight);
             }
         }
 
-        public void UpdateFlightScreen()
+        internal void UpdateFlightScreen()
         {
             List<Flight> flights = Flights.OrderBy(x => x.Departure).ToList();
             FlightScreen.Clear();
