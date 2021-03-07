@@ -16,7 +16,7 @@ namespace BaggageSorteringLib
             FlightSchedule = new FlightSchedule(Time, flightScreenLength);
         }
 
-        private int _bustleLevel = 1;
+        private int _bustleLevel = 4;
 
         public SimulationTime Time { get; private set; }
         public CheckinArea CheckinArea { get; private set; }

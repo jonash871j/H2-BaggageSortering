@@ -71,7 +71,7 @@ namespace BaggageSorteringLib
         {
             while (Flights.Count < 1000)
             {
-                DateTime startArrival = Time.DateTime;
+                DateTime startArrival = Time.DateTime.AddMinutes(120);
 
                 if (Flights.Count > 0)
                 {
