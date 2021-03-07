@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Configuration;
 using System.Threading;
 
 namespace BaggageSorteringLib
 {
     public class Simulator
     {
-        public Simulator()
+        public Simulator(int counterAmount, int terminalAmount, int conveyorBeltLength, int flightScreenLength)
         {
             Time = new SimulationTime();
             Time.TimeUpdate = OnTimeUpdate;
 
-            CheckinArea = new CheckinArea(counterAmount: 10);
-            TerminalsArea = new TerminalsArea(terminalAmount: 15);
-            SortingMachine = new SortingMachine(Time, CheckinArea, TerminalsArea);
-            FlightSchedule = new FlightSchedule(Time, flightScreenLength: 12);
+            CheckinArea = new CheckinArea(counterAmount);
+            TerminalsArea = new TerminalsArea(terminalAmount);
+            SortingMachine = new SortingMachine(Time, conveyorBeltLength, CheckinArea, TerminalsArea);
+            FlightSchedule = new FlightSchedule(Time, flightScreenLength);
         }
 
         private int _bustleLevel = 1;
@@ -24,10 +23,10 @@ namespace BaggageSorteringLib
         public TerminalsArea TerminalsArea { get; private set; }
         public SortingMachine SortingMachine { get; private set; }
         public FlightSchedule FlightSchedule { get; private set; }
+        public bool IsSimulationStarted { get; private set; }
 
         public MessageEvent ProcessExceptionInfo { get; set; }
-        public bool IsAutoGenerationEnabled { get; set; }
-
+        public bool IsAutoGenereatedReservationEnabled { get; set; }
         public int BustleLevel 
         {
             get => _bustleLevel;
@@ -40,33 +39,58 @@ namespace BaggageSorteringLib
             }
         }
 
+        /// <summary>
+        /// Used to start the simulation, can only be called once
+        /// </summary>
         public void Start()
         {
-            Time.Start();
-            SortingMachine.Start();
-            Update();
+            if (!IsSimulationStarted)
+            {
+                Time.Start();
+                SortingMachine.Start(); // Starts sorting machine thread
+                Update();
+
+                IsSimulationStarted = true;
+            }
         }
+
+        /// <summary>
+        /// Used to restart the simulation
+        /// </summary>
         public void Restart()
         {
             Time.Stop();
+
             FlightSchedule.Clear();
             SortingMachine.Clear();
             CheckinArea.Clear();
             TerminalsArea.Clear();
             Update();
+
             Time.Start();
         }
 
+        /// <summary>
+        /// Used to add reservation
+        /// </summary>
         public void AddReservation(Reservation reservation)
         {
             FlightSchedule.AddReservation(reservation);
         }
 
+        /// <summary>
+        /// Event: Is being called every time the simulation time has moved a minute
+        /// </summary>
         private void OnTimeUpdate()
         {
             try
             {
+                Monitor.Enter(this);
+
                 Update();
+
+                Monitor.PulseAll(this);
+                Monitor.Exit(this);
             }
             catch (Exception exception)
             {
@@ -74,13 +98,13 @@ namespace BaggageSorteringLib
                 Time.Stop();
             }
         }
+
+        /// <summary>
+        /// Used to update airport
+        /// </summary>
         private void Update()
         {
-            if (IsAutoGenerationEnabled)
-            {
-                FlightSchedule.GenerateRandomFlights(BustleLevel, isPreBookedWithRandomAmount: true);
-            }
-
+            FlightSchedule.GenerateRandomFlights(BustleLevel, IsAutoGenereatedReservationEnabled);
             FlightSchedule.UpdateStatuses();
             FlightSchedule.RemoveOldFlights();
             FlightSchedule.UpdateFlightScreen();

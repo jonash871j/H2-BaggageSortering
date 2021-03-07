@@ -31,11 +31,12 @@ namespace BaggageSorteringLib
             {
                 if (flight.Terminal == null)
                 {
-                    Terminal terminal = Terminals.FirstOrDefault(t => t.Flight == null);
+                    Terminal terminal = Terminals.FirstOrDefault(t => !t.IsFlightConnectedToTerminal);
+
                     if (terminal != null)
                     {
-                        terminal.Flight = flight;
                         flight.MoveToTerminal(terminal);
+                        terminal.ConnectTerminalToFlight(flight);
                     }
                 }
             }
@@ -48,12 +49,12 @@ namespace BaggageSorteringLib
                 {
                     if (terminal.Flight.Status == FlightStatus.Takeoff)
                     {
-                        terminal.Flight = null;
+                        terminal.DisconnectFlightFromTerminal();
                         terminal.Close();
                     }
                     else if (terminal.Flight.Status == FlightStatus.Refilling && terminal.Luggages.Count > 0)
                     {
-                        terminal.LoadFlightLuggages();
+                        terminal.ExportLuggagesToFlight();
                     }
                 }
             }

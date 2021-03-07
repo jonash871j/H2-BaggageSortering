@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BaggageSorteringLib
+﻿namespace BaggageSorteringLib
 {
     public class Passenger
     {
-        public Passenger(string firstName = "Dummy", string lastName = "Dummy", string email = "dummy@gmail.com", string phoneNumber = "+4512345678", string address = "street 2")
+        public Passenger(string firstName, string lastName, string email, string phoneNumber, string address)
         {
-            Id = _id++;
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             PhoneNumber = phoneNumber;
             Address = address;
         }
-
-        private static int _id = 0; 
 
         public int Id { get; private set; }
         public string FirstName { get; set; }

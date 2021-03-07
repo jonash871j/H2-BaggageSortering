@@ -69,7 +69,6 @@
     <Compile Include="Simulation\Delegates.cs" />
     <Compile Include="Simulation\Enums.cs" />
     <Compile Include="Simulation\FlightSchedule\FlightSchedule.cs" />
-    <Compile Include="Simulation\BaggageSorting\IOpenClose.cs" />
     <Compile Include="Simulation\Reservation\Luggage.cs" />
     <Compile Include="Simulation\Reservation\Passenger.cs" />
     <Compile Include="Simulation\FlightSchedule\Flight.cs" />

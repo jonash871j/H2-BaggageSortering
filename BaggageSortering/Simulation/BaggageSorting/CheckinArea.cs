@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
@@ -16,6 +13,9 @@ namespace BaggageSorteringLib
 
         public Counter[] Counters { get; private set; }
 
+        /// <summary>
+        /// Used to clear terminals
+        /// </summary>
         internal void Clear()
         {
             for (int i = 0; i < Counters.Length; i++)
@@ -23,31 +23,43 @@ namespace BaggageSorteringLib
                 Counters[i] = new Counter(id: i);
             }
         }
+
+        /// <summary>
+        /// Used to check luggage in at terminal
+        /// </summary>
         internal void Checkin(Luggage luggage)
         {
             Counter counter = Counters.FirstOrDefault(c => c.Id == luggage.CounterId);
-            counter.CheckLuggageIn(luggage);
+            counter.Checkin(luggage);
             luggage.Reservation.IsCheckedIn = true;
         }
+
+        /// <summary>
+        /// Used to auto check in luggage at terminal
+        /// </summary>
         internal void UpdateAutoCheckin()
         {
             // Finds all counters there is open
             foreach (Counter counter in Counters)
             {
                 // When counter is open and are not occupied by baggage
-                if (counter.IsOpen && !counter.IsLuggageSlotAvailable())
+                if (counter.IsOpen && !counter.IsLuggageReady())
                 {
                     // Get reservation if not checked in
                     Reservation reservation = counter.Flight.Reservations.Find(r => !r.IsCheckedIn);
 
                     // Check luggage in if valid
-                    if (reservation != null)
+                    if (reservation != null && reservation.Flight.Terminal != null)
                     {
                         Checkin(new Luggage(reservation.Flight.Terminal.Id, counter.Id, reservation));
                     }
                 }
             }
         }
+
+        /// <summary>
+        /// Used to open counters for incomming flights
+        /// </summary>
         internal void OpenCountersForIncommingFlights(FlightSchedule flightSchedule)
         {
             // Find flights there are ready for check in
@@ -66,22 +78,30 @@ namespace BaggageSorteringLib
                 // Update counter flight screen and open counter
                 if (counter != null)
                 {
-                    counter.UpdateFlight(flight);
+                    counter.SetTargetedFlight(flight);
                     counter.Open();
                     continue;
                 }
             }
         }
+
+        /// <summary>
+        /// Used to close expired counters
+        /// </summary>
         internal void CloseExpiredCounters()
         {
             // Closes counter if checkin period is done
             foreach (Counter counter in Counters)
             {
-                if (!counter.Flight.IsReadyForCheckIn())
+                Flight flight = counter.Flight;
+
+                // When flight is no longer ready for check in
+                if (!flight.IsReadyForCheckIn())
                 {
                     counter.Close();
                 }
-                if (counter.Flight.GetCheckinAmount() == counter.Flight.Reservations.Count)
+                // When check in amount is the same as the reservation amount
+                if (flight.GetCheckinAmount() == flight.Reservations.Count)
                 {
                     counter.Close();
                 }

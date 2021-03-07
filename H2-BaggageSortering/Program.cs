@@ -1,6 +1,7 @@
 ﻿using BaggageSorteringLib;
 using Engine;
 using System;
+using System.Threading;
 
 class Program
 {
@@ -11,8 +12,13 @@ class Program
     static void Main()
     {
         // Starts simulator
-        simulator = new Simulator();
-        simulator.IsAutoGenerationEnabled = true;
+        simulator = new Simulator(
+            counterAmount: 10,
+            terminalAmount: 15,
+            conveyorBeltLength: 20,
+            flightScreenLength: 12
+        );
+        simulator.IsAutoGenereatedReservationEnabled = true;
         simulator.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;
         simulator.SortingMachine.ProcessExceptionInfo += OnSortingMachineProcessError;
         simulator.FlightSchedule.AutoReservationsInfo += OnGeneralInfo;
@@ -28,13 +34,25 @@ class Program
         // Simulation loop
         while (true)
         {
-            UserInput();
-            DrawAirportOverview();
+            if (Monitor.TryEnter(simulator))
+            {
+                UserInput();
+                DrawAirportOverview();
 
-            ConsoleEx.Update(); // Renderers current content to console
-            ConsoleEx.Clear();
+                ConsoleEx.Update(); // Renderers current content to console
+                ConsoleEx.Clear();
+
+                Monitor.PulseAll(simulator);
+                Monitor.Exit(simulator);
+            }
         }
     }
+
+    static void OnSortingMachineProcessInfo(string msg)     => smBuffer.WriteLine(msg);
+    static void OnSortingMachineProcessError(string msg)    => smBuffer.WriteLine("\fc" + msg);
+    static void OnGeneralInfo(string msg)                   => gBuffer.WriteLine(msg);
+    static void OnGeneralWarningInfo(string msg)            => gBuffer.WriteLine("\fe" + msg);
+    static void OnGeneralErrorInfo(string msg)              => gBuffer.WriteLine("\fc" + msg);
 
     static void UserInput()
     {
@@ -83,10 +101,4 @@ class Program
         AirportDraw.InfoBuffer(43, "SORTING MACHINE INFO", smBuffer);
         AirportDraw.InfoBuffer(57, "GENERAL INFO", gBuffer);
     }
-
-    static void OnSortingMachineProcessInfo(string msg)     => smBuffer.WriteLine(msg);
-    static void OnSortingMachineProcessError(string msg)    => smBuffer.WriteLine("\fc" + msg);
-    static void OnGeneralInfo(string msg)                   => gBuffer.WriteLine(msg);
-    static void OnGeneralWarningInfo(string msg)            => gBuffer.WriteLine("\fe" + msg);
-    static void OnGeneralErrorInfo(string msg)              => gBuffer.WriteLine("\fc" + msg);
 }

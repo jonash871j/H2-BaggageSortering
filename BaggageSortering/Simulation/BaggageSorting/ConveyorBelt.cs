@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BaggageSorteringLib
+﻿namespace BaggageSorteringLib
 {
     public class ConveyorBelt<T>
     {
@@ -18,17 +12,25 @@ namespace BaggageSorteringLib
         public T this[int i]
         {
             get => Buffer[i];
-            set => Buffer[i] = value;
+            internal set => Buffer[i] = value;
         }
 
         public int Length { get; private set; }
-        public T[] Buffer { get; set; }
+        public T[] Buffer { get; internal set; }
 
-        public void Push(T type)
+        /// <summary>
+        /// Used to set type to first index in buffer
+        /// </summary>
+        internal void Push(T type)
         {
             Buffer[0] = type;
         }
-        public T Pull()
+
+        /// <summary>
+        /// Used to get last type in buffer
+        /// </summary>
+        /// <returns>type</returns>
+        internal T Pull()
         {
             T type = Buffer[Length - 1];
             if (type == null)
@@ -42,6 +44,10 @@ namespace BaggageSorteringLib
                 return type;
             }
         }
+        /// <summary>
+        /// Checks if last pull is empty
+        /// </summary>
+        /// <returns>true when empty</returns>
         public bool IsPullEmpty()
         {
             T type = Buffer[Length - 1];
@@ -54,6 +60,11 @@ namespace BaggageSorteringLib
                 return false;
             }
         }
+
+        /// <summary>
+        /// Used to check is there is space on the first index
+        /// </summary>
+        /// <returns>true there is space</returns>
         public bool IsSpace()
         {
             if (Buffer[0] == null)
@@ -65,7 +76,11 @@ namespace BaggageSorteringLib
                 return false;
             }
         }
-        public void MoveForward()
+
+        /// <summary>
+        /// Used to move conveyor belt forward if last index is empty
+        /// </summary>
+        internal void MoveForward()
         {
             if (Buffer[Length - 1] == null)
             {
@@ -76,7 +91,11 @@ namespace BaggageSorteringLib
                 Buffer[0] = default;
             }
         }
-        public void Clear()
+
+        /// <summary>
+        /// Used to clear the buffer with nulls
+        /// </summary>
+        internal void Clear()
         {
             for (int i = 0; i < Length; i++)
             {

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
@@ -66,7 +64,7 @@ namespace BaggageSorteringLib
             }
         }
 
-        internal void GenerateRandomFlights(int bustleLevel, bool isPreBookedWithRandomAmount)
+        internal void GenerateRandomFlights(int bustleLevel, bool isAutoGenereatedReservationEnabled)
         {
             if (bustleLevel <= 0)
             {
@@ -84,7 +82,7 @@ namespace BaggageSorteringLib
 
                 Flight flight = AutoGenerator.CreateRandomFlight(startArrival, 0, 600 / bustleLevel);
 
-                if (isPreBookedWithRandomAmount)
+                if (isAutoGenereatedReservationEnabled)
                 {
                     int minSeats = bustleLevel * 10;
                     if (minSeats > flight.SeatsAmount)

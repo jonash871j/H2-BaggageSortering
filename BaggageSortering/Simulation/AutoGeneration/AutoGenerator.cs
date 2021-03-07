@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
     public static class AutoGenerator
     {
-        //public AutoGenerator(Simulator simulator)
-        //{
-        //    Simulator = simulator;
-        //}
-
         private static Random rng = new Random();
 
-        //public Simulator Simulator { get; private set; }
-
+        /// <summary>
+        /// Used to generate random flight
+        /// </summary>
+        /// <returns>flight</returns>
         public static Flight CreateRandomFlight(DateTime startArrival, int minArrival, int maxArrival)
         {
             startArrival = startArrival.AddMinutes(rng.Next(minArrival, maxArrival));
@@ -29,6 +22,11 @@ namespace BaggageSorteringLib
                 destination: Data.GetRandomCity()
             );
         }
+
+        /// <summary>
+        /// Used to create random reservation
+        /// </summary>
+        /// <returns>reservation</returns>
         public static Reservation CreateRandomReservation(Flight flight)
         {
             string firstName = Data.GetRandomName();

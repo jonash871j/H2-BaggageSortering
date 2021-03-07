@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
-    public class Counter : IOpenClose
+    public class Counter
     {
         public Counter(int id)
         {
@@ -21,22 +21,36 @@ namespace BaggageSorteringLib
         public Flight Flight { get; private set; }
         public bool IsOpen { get; private set; }
 
-        public void Close()
+        /// <summary>
+        /// Used to close counter
+        /// </summary>
+        internal void Close()
         {
             IsOpen = false;
             Flight = Flight.None;
         }
-        public void Open()
+
+        /// <summary>
+        /// Used to open counter
+        /// </summary>
+        internal void Open()
         {
             IsOpen = true;
         }
 
-        public void UpdateFlight(Flight flight)
+        /// <summary>
+        /// Used to set targeted flight, 
+        /// this will determine where the luggage should goto
+        /// </summary>
+        internal void SetTargetedFlight(Flight flight)
         {
             Flight = flight;
         }
 
-        public void CheckLuggageIn(Luggage luggage)
+        /// <summary>
+        /// Used to check luggage in
+        /// </summary>
+        internal void Checkin(Luggage luggage)
         {
             if (Luggage == null)
             {
@@ -44,16 +58,25 @@ namespace BaggageSorteringLib
             }
             else
             {
-                // There is already a luggage on counter
+                throw new Exception("There is already luggage on counter!");
             }
         }
+        /// <summary>
+        /// Used to get luggage from counter
+        /// </summary>
+        /// <returns></returns>
         internal Luggage GetLuggageFromCounter()
         {
             Luggage luggage = Luggage;
             Luggage = null;
             return luggage;
         }
-        public bool IsLuggageSlotAvailable()
+
+        /// <summary>
+        /// Used to check if luggage is ready to go into the sorting machine
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLuggageReady()
         {
             return (IsOpen) && (Luggage != null);
         }

@@ -1,26 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
-
-
     public class SimulationTime
     {
         public SimulationTime()
         {
-            timer = new System.Timers.Timer(1000);
-            timer.Elapsed += OnTick;
+            Timer = new System.Timers.Timer(1000);
+            Timer.Elapsed += OnTick;
 
             DateTime = DateTime.Now;
             Speed = 1;
         }
 
-        private readonly System.Timers.Timer timer;
+        private readonly System.Timers.Timer Timer;
         private int _speed;
         private bool isTimeStopRequested = false;
 
@@ -31,25 +25,35 @@ namespace BaggageSorteringLib
             set
             {
                 _speed = value;
-                timer.Interval = 1000 / _speed;
+                Timer.Interval = 1000 / _speed;
             }
         }
         internal TimeUpdateEvent TimeUpdate { get; set; }
 
+        /// <summary>
+        /// Used to start time
+        /// </summary>
         internal void Start()
         {
-            timer.Enabled = true;
+            Timer.Enabled = true;
         }
+
+        /// <summary>
+        /// Used to stop time, caused a small delay in thread!
+        /// </summary>
         internal void Stop()
         {
             isTimeStopRequested = true;
-            while (timer.Enabled)
+            while (Timer.Enabled)
             {
                 Thread.Sleep(1);
             }
             DateTime = DateTime.Now;
         }
 
+        /// <summary>
+        /// Event: is being called on each tick
+        /// </summary>
         private void OnTick(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (Monitor.TryEnter(this))
@@ -62,7 +66,7 @@ namespace BaggageSorteringLib
 
             if (isTimeStopRequested)
             {
-                timer.Enabled = false;
+                Timer.Enabled = false;
                 isTimeStopRequested = false;
             }
         }

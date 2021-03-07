@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BaggageSorteringLib
 {
-    public class Terminal : IOpenClose
+    public class Terminal
     {
         public Terminal(int id)
         {
@@ -17,22 +13,9 @@ namespace BaggageSorteringLib
 
         public int Id { get; private set; }
         public bool IsOpen { get; private set; }
+        public bool IsFlightConnectedToTerminal { get; private set; }
         public Queue<Luggage> Luggages { get; private set; }
-        public Flight Flight { get; set; }
-
-        public void Close()
-        {
-            IsOpen = false;
-        }
-        public void Open()
-        {
-            IsOpen = true;
-        }
-        
-        public void AddLuggage(Luggage luggage)
-        {
-            Luggages.Enqueue(luggage);
-        }
+        public Flight Flight { get; private set; }
 
         public override string ToString()
         {
@@ -46,9 +29,54 @@ namespace BaggageSorteringLib
             }
         }
 
-        public void LoadFlightLuggages()
+        /// <summary>
+        /// Used to close terminal
+        /// </summary>
+        internal void Close()
         {
-            if (Flight != null)
+            IsOpen = false;
+        }
+
+        /// <summary>
+        /// Used to open terminal
+        /// </summary>
+        internal void Open()
+        {
+            IsOpen = true;
+        }
+
+        /// <summary>
+        /// Used to add luggage to terminal storage
+        /// </summary>
+        internal void AddLuggage(Luggage luggage)
+        {
+            Luggages.Enqueue(luggage);
+        }
+
+        /// <summary>
+        /// Used to connect terminal to flight
+        /// </summary>
+        internal void ConnectTerminalToFlight(Flight flight)
+        {
+            Flight = flight;
+            IsFlightConnectedToTerminal = true;
+        }
+
+        /// <summary>
+        /// Used to idsconnect flight from terminal 
+        /// </summary>
+        internal void DisconnectFlightFromTerminal()
+        {
+            Flight = null;
+            IsFlightConnectedToTerminal = false;
+        }
+
+        /// <summary>
+        /// Used to export all luggage storted in the terminal to flight
+        /// </summary>
+        internal void ExportLuggagesToFlight()
+        {
+            if (IsFlightConnectedToTerminal)
             {
                 Flight.LoadWithLuggages(Luggages);
                 Luggages = new Queue<Luggage>();
