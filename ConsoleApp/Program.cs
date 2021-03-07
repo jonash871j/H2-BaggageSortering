@@ -10,7 +10,7 @@ class Program
 
     static void Main()
     {
-        // Initialize simulator
+        //  Initialize simulator
         Simulator sim = new Simulator(
             counterAmount: 10,
             terminalAmount: 15,
