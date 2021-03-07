@@ -36,7 +36,7 @@ class Program
             if (Monitor.TryEnter(sim))
             {
                 // User input section *************************
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < 8; i++)
                 {
                     if (Input.KeyPressed((Key)(i + '1')))
                     {
@@ -59,7 +59,7 @@ class Program
                 // Draw section *******************************
                 ConsoleEx.SetPosition(60, 0);
                 ConsoleEx.WriteLine("\f9                CONTROLS");
-                ConsoleEx.WriteLine("  SIMULATION SPEED :\ff 1 2 3 4 5 6 7 8 9");
+                ConsoleEx.WriteLine("  SIMULATION SPEED :\ff 1 2 3 4 5 6 7 8");
                 ConsoleEx.WriteLine("AIRPORT BUSTLE ADD :\ff ARROW UP");
                 ConsoleEx.WriteLine("AIRPORT BUSTLE SUB :\ff ARROW DOWN");
                 ConsoleEx.WriteLine("           RESTART :\ff R");
