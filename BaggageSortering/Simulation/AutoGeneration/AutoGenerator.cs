@@ -24,24 +24,19 @@ namespace BaggageSorteringLib
         }
 
         /// <summary>
-        /// Used to create random reservation
+        /// Used to create random passenger
         /// </summary>
         /// <returns>reservation</returns>
-        public static Reservation CreateRandomReservation(Flight flight)
+        public static Passenger CreateRandomPassenger()
         {
             string firstName = Data.GetRandomName();
 
-            Passenger passenger = new Passenger(
+            return new Passenger(
                 firstName: firstName,   
                 lastName: Data.GetRandomName(),
                 email: firstName + rng.Next(1, 10000) + "@gmail.com",
                 phoneNumber: "+45" + rng.Next(10000000, 99999999),
                 address: $"{Data.GetRandomCity()} {Data.GetRandomStreet()} {rng.Next(1, 1000)}"
-            );
-
-            return new Reservation(
-                passenger,
-                flight
             );
         }
     }

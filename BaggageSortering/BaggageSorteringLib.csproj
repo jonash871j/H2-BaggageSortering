@@ -74,7 +74,8 @@
     <Compile Include="Simulation\FlightSchedule\Flight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simulation\Reservation\Reservation.cs" />
-    <Compile Include="Simulation\Simulator.cs" />
+    <Compile Include="Simulation\Simulator.Request.cs" />
+    <Compile Include="Simulation\Simulator.Main.cs" />
     <Compile Include="Simulation\BaggageSorting\SortingMachine.cs" />
     <Compile Include="Simulation\BaggageSorting\Terminal.cs" />
     <Compile Include="Simulation\SimulationTime.cs" />

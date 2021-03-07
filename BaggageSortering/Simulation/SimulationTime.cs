@@ -59,7 +59,7 @@ namespace BaggageSorteringLib
             if (Monitor.TryEnter(this))
             {
                 TimeUpdate.Invoke();
-                DateTime = DateTime.AddMinutes(1);
+                DateTime = DateTime.AddSeconds(30);
                 Monitor.PulseAll(this);
                 Monitor.Exit(this);
             }

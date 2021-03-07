@@ -13,19 +13,19 @@ namespace BaggageSorteringLib
 
         public int Id { get; private set; }
         public bool IsOpen { get; private set; }
-        public bool IsFlightConnectedToTerminal { get; private set; }
+        public bool IsFlightReservedToTerminal { get; private set; }
         public Queue<Luggage> Luggages { get; private set; }
         public Flight Flight { get; private set; }
 
         public override string ToString()
         {
-            if (IsOpen)
+            if (IsFlightReservedToTerminal)
             {
-                return $"{Id}";
+                return $"Gate {Id} {Flight.Name} {Flight.Status}";
             }
             else
             {
-                return $"{Id}";
+                return $"Gate {Id}";
             }
         }
 
@@ -56,19 +56,19 @@ namespace BaggageSorteringLib
         /// <summary>
         /// Used to connect terminal to flight
         /// </summary>
-        internal void ConnectTerminalToFlight(Flight flight)
+        internal void ReserveTerminalToFlight(Flight flight)
         {
             Flight = flight;
-            IsFlightConnectedToTerminal = true;
+            IsFlightReservedToTerminal = true;
         }
 
         /// <summary>
         /// Used to idsconnect flight from terminal 
         /// </summary>
-        internal void DisconnectFlightFromTerminal()
+        internal void RemoveFlightFromTerminal()
         {
             Flight = null;
-            IsFlightConnectedToTerminal = false;
+            IsFlightReservedToTerminal = false;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace BaggageSorteringLib
         /// </summary>
         internal void ExportLuggagesToFlight()
         {
-            if (IsFlightConnectedToTerminal)
+            if (IsFlightReservedToTerminal)
             {
                 Flight.LoadWithLuggages(Luggages);
                 Luggages = new Queue<Luggage>();

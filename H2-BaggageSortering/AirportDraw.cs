@@ -1,10 +1,24 @@
 ﻿using BaggageSorteringLib;
 using Engine;
-using System;
 
 static class AirportDraw
 {
-    public static void ConveyorBelt(ConveyorBelt<Luggage> conveyorBelt, string name, int y)
+    /// <summary>
+    /// Used to draw checkin area
+    /// </summary>
+    public static void CheckinArea(int y, CheckinArea checkinArea)
+    {
+        ConsoleEx.SetPosition(0, y);
+        foreach(Counter c in checkinArea.Counters)
+        {
+            ConsoleEx.WriteLine($"\f{c.Id+1:X}█ \f7{c}");
+        }
+    }
+
+    /// <summary>
+    /// Used to draw conveyor belt to console
+    /// </summary>
+    public static void ConveyorBelt(int y, ConveyorBelt<Luggage> conveyorBelt)
     {
         for (int i = 0; i < conveyorBelt.Length; i++)
         {
@@ -12,50 +26,73 @@ static class AirportDraw
 
             if (luggage != null)
             {
-                ConsoleEx.WriteCharacter(i, y, 'G', Color.Get((byte)(luggage.TerminalId+1), (byte)(luggage.CounterId+1)));
+                ConsoleEx.WriteCharacter(i, y, 'G', Color.Get((byte)(luggage.TerminalId + 1), (byte)(luggage.CounterId + 1)));
             }
         }
+
         ConsoleEx.SetPosition(conveyorBelt.Length + 3, y);
-        ConsoleEx.WriteLine(name);
+        ConsoleEx.WriteLine("- Sorting system's conveyor belt");
     }
-    public static void CheckinArea(CheckinArea checkinArea, int y)
-    {
-        Counter[] counters = checkinArea.Counters;
 
+    /// <summary>
+    /// Used to draw terminal area
+    /// </summary>
+    public static void TerminalsArea(int y, TerminalsArea terminalsArea)
+    {
         ConsoleEx.SetPosition(0, y);
-        for (int i = 0; i < counters.Length; i++)
+        foreach (Terminal t in terminalsArea.Terminals)
         {
-            Counter counter = counters[i];
-            ConsoleEx.WriteLine($"  Counter {counter.Id}  {(counter.IsOpen ? "open" : "")} {counter.Flight.Name} {counter.Flight.Destination}");
-            ConsoleEx.WriteCharacter(0, y + i, '█', (byte)(counter.Id+1));
+            ConsoleEx.Write($"\f{t.Id+1:X}G \f7{t}");
+            ConsoleEx.CursorX = 32;
+            for (int i = 0; i < t.Luggages.Count && i < 50; i++)
+            {
+                ConsoleEx.Write($"\f{t.Id + 1:X}■");
+            }
+            ConsoleEx.Write($"\f7 : {t.Luggages.Count}\n");
         }
     }
-    public static void TerminalsArea(TerminalsArea terminalsArea, int y)
+
+    /// <summary>
+    /// Used to draw flight schedule
+    /// </summary>
+    public static void FlightSchedule(int y, FlightSchedule flightSchedule)
     {
-        Terminal[] terminals = terminalsArea.Terminals;
+        Draw.Color = Color.Grey;
+        Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + flightSchedule.FlightScreenLength + 2, true, '.');
 
-        for (int i = 0; i < terminals.Length; i++)
+        ConsoleEx.SetPosition(2, y + 1);
+        ConsoleEx.WriteLine("\f3- FLIGHT SCHEDULE");
+        ConsoleEx.WriteLine(
+            "\f3DEPATURE      " +
+            "DESTINATION         " +
+            "FLIGHT      " +
+            "GATE    " +
+            "STATUS                  " +
+            "CHECKIN/BOOKED/MAX"
+        );
+        foreach (Flight f in flightSchedule.FlightScreen)
         {
-            Terminal terminal = terminals[i];
 
-            ConsoleEx.SetPosition(0, y + i);
-            ConsoleEx.WriteLine($"  Gate {terminal.Id}");
-            ConsoleEx.WriteCharacter(0, y + i, 'G', (byte)(terminal.Id+1));
-
-            int amount = terminal.Luggages.Count;
-            int max = amount;
-            if (max > 50)
+            ConsoleEx.Write($"{f.Departure.ToString("HH:mm")}");
+            ConsoleEx.CursorX = 14;
+            ConsoleEx.Write($"{f.Destination}");
+            ConsoleEx.CursorX = 34;
+            ConsoleEx.Write($"{f.Name}");
+            ConsoleEx.CursorX = 46;
+            if (f.IsAtTerminal)
             {
-                max = 50;
+                ConsoleEx.Write(f.Terminal.Id.ToString());
             }
-            for (int j = 0; j < max; j++)
-            {
-                ConsoleEx.WriteCharacter(j + 14, y + i, '■', (byte)(terminal.Id+1));
-            }
-            ConsoleEx.SetPosition(max + 14, y + i);
-            ConsoleEx.Write($" : {amount}");
+            ConsoleEx.CursorX = 54;
+            ConsoleEx.Write($"{f.Status}");
+            ConsoleEx.CursorX = 78;
+            ConsoleEx.Write($"{f.GetCheckinAmount()}/{f.Reservations.Count}/{f.SeatsAmount}\n");
         }
     }
+
+    /// <summary>
+    /// Used to draw info buffer window
+    /// </summary>
     public static void InfoBuffer(int y, string title, ConsoleBuffer buffer)
     {
         Draw.Color = Color.Grey;
@@ -63,47 +100,5 @@ static class AirportDraw
         ConsoleEx.SetPosition(2, y + 1);
         ConsoleEx.WriteLine("\f5- " + title);
         Draw.ConsoleBuffer(2, y + 2, buffer);
-    }
-    public static void FlightSchedule(int y, FlightSchedule flightSchedule)
-    {
-        Draw.Color = Color.Grey;
-        Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + flightSchedule.FlightScreenLength + 2, true, '.');
-        ConsoleEx.SetPosition(2, y + 1);
-        ConsoleEx.WriteLine("\f3- FLIGHT SCHEDULE");
-        ConsoleEx.SetPosition(2, y + 2);
-        ConsoleEx.Write("\f3DEPATURE");
-        ConsoleEx.SetPosition(16, y + 2);
-        ConsoleEx.Write("\f3DESTINATION");
-        ConsoleEx.SetPosition(36, y + 2);
-        ConsoleEx.Write("\f3FLIGHT");
-        ConsoleEx.SetPosition(48, y + 2);
-        ConsoleEx.Write("\f3GATE");
-        ConsoleEx.SetPosition(56, y + 2);
-        ConsoleEx.Write("\f3STATUS");
-        ConsoleEx.SetPosition(80, y + 2);
-        ConsoleEx.Write("\f3CHECKIN/BOOKED/MAX");
-
-        for (int i = 0; i < flightSchedule.FlightScreen.Count; i++)
-        {
-            Flight flight = flightSchedule.FlightScreen[i];
-
-            ConsoleEx.SetPosition(2, y + i + 3);
-            ConsoleEx.Write($"{flight.Departure.ToString("HH:mm")}");
-            ConsoleEx.SetPosition(16, y + i + 3);
-            ConsoleEx.Write($"{flight.Destination}");
-            ConsoleEx.SetPosition(36, y + i + 3);
-            ConsoleEx.Write($"{flight.Name}");
-            ConsoleEx.SetPosition(48, y + i + 3);
-            if (flight.Terminal != null)
-            {
-                ConsoleEx.Write(flight.Terminal.Id.ToString());
-            }
-
-            ConsoleEx.SetPosition(56, y + i + 3);
-            ConsoleEx.Write(flight.Status.ToString());
-     
-            ConsoleEx.SetPosition(80, y + i + 3);
-            ConsoleEx.Write($"{flight.GetCheckinAmount()}/{flight.Reservations.Count}/{flight.SeatsAmount}");
-        }
     }
 }

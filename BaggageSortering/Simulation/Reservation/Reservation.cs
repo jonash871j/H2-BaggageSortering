@@ -2,7 +2,7 @@
 {
     public class Reservation
     {
-        public Reservation(Passenger passenger, Flight flight)
+        internal Reservation(Passenger passenger, Flight flight)
         {
             Passenger =  passenger;
             Flight = flight;

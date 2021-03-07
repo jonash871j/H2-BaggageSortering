@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace BaggageSorteringLib
 {
-    public class Simulator
+    public partial class Simulator
     {
         public Simulator(int counterAmount, int terminalAmount, int conveyorBeltLength, int flightScreenLength)
         {
@@ -26,7 +26,7 @@ namespace BaggageSorteringLib
         public bool IsSimulationStarted { get; private set; }
 
         public MessageEvent ProcessExceptionInfo { get; set; }
-        public bool IsAutoGenereatedReservationEnabled { get; set; }
+        public bool IsAutoGenereatedReservationsEnabled { get; set; }
         public int BustleLevel 
         {
             get => _bustleLevel;
@@ -71,14 +71,6 @@ namespace BaggageSorteringLib
         }
 
         /// <summary>
-        /// Used to add reservation
-        /// </summary>
-        public void AddReservation(Reservation reservation)
-        {
-            FlightSchedule.AddReservation(reservation);
-        }
-
-        /// <summary>
         /// Event: Is being called every time the simulation time has moved a minute
         /// </summary>
         private void OnTimeUpdate()
@@ -104,7 +96,7 @@ namespace BaggageSorteringLib
         /// </summary>
         private void Update()
         {
-            FlightSchedule.GenerateRandomFlights(BustleLevel, IsAutoGenereatedReservationEnabled);
+            FlightSchedule.GenerateRandomFlights(BustleLevel, IsAutoGenereatedReservationsEnabled);
             FlightSchedule.UpdateStatuses();
             FlightSchedule.RemoveOldFlights();
             FlightSchedule.UpdateFlightScreen();

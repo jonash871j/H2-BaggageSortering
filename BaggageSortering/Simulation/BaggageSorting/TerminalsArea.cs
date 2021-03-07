@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaggageSorteringLib
 {
@@ -15,7 +12,10 @@ namespace BaggageSorteringLib
         }
 
         public Terminal[] Terminals { get; private set; }
-
+        
+        /// <summary>
+        /// Used to clear all terminals
+        /// </summary>
         internal void Clear()
         {
             for (int i = 0; i < Terminals.Length; i++)
@@ -23,33 +23,42 @@ namespace BaggageSorteringLib
                 Terminals[i] = new Terminal(id: i);
             }
         }
+
+        /// <summary>
+        /// Used to open terminas for incomming flights
+        /// </summary>
         internal void OpenTerminalsForIncommingFlights(FlightSchedule flightSchedule)
         {
+            // Gets all the flights there is on the way
             List<Flight> flights = flightSchedule.Flights.FindAll(f => f.Status == FlightStatus.OnTheWay);
             
             foreach (Flight flight in flights)
             {
-                if (flight.Terminal == null)
+                if (!flight.IsAtTerminal)
                 {
-                    Terminal terminal = Terminals.FirstOrDefault(t => !t.IsFlightConnectedToTerminal);
+                    Terminal terminal = Terminals.FirstOrDefault(t => !t.IsFlightReservedToTerminal);
 
                     if (terminal != null)
                     {
                         flight.MoveToTerminal(terminal);
-                        terminal.ConnectTerminalToFlight(flight);
+                        terminal.ReserveTerminalToFlight(flight);
                     }
                 }
             }
         }
+
+        /// <summary>
+        /// Used to close terminals for experied flights
+        /// </summary>
         internal void CloseTerminalsForExpiredFlights()
         {
             foreach (Terminal terminal in Terminals)
             {
-                if (terminal.Flight != null)
+                if (terminal.IsFlightReservedToTerminal)
                 {
                     if (terminal.Flight.Status == FlightStatus.Takeoff)
                     {
-                        terminal.DisconnectFlightFromTerminal();
+                        terminal.RemoveFlightFromTerminal();
                         terminal.Close();
                     }
                     else if (terminal.Flight.Status == FlightStatus.Refilling && terminal.Luggages.Count > 0)

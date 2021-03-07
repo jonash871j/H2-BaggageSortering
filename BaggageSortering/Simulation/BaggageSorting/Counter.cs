@@ -21,6 +21,24 @@ namespace BaggageSorteringLib
         public Flight Flight { get; private set; }
         public bool IsOpen { get; private set; }
 
+        public override string ToString()
+        {
+            if (IsOpen)
+            {
+                return
+                   $"Counter {Id} is " +
+                   $"open to " +
+                   $"{Flight.Destination} on " +
+                   $"{Flight.Name}";
+            }
+            else
+            {
+                return
+                    $"Counter {Id} is " +
+                    $"closed";
+            }
+        }
+
         /// <summary>
         /// Used to close counter
         /// </summary>

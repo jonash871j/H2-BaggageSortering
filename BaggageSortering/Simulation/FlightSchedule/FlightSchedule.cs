@@ -21,41 +21,41 @@ namespace BaggageSorteringLib
         public List<Flight> FlightScreen { get; private set; }
         public List<Flight> Flights { get; private set; }
 
-        public MessageEvent ReservationInfo;
         public MessageEvent AutoReservationsInfo;
         public MessageEvent FlightInfo;
         public MessageEvent BadFlightInfo;
 
+        /// <summary>
+        /// Used to clear flight schedule
+        /// </summary>
         internal void Clear()
         {
             FlightScreen.Clear();
             Flights.Clear();
         }
 
+        /// <summary>
+        /// Used to add flight to schedule
+        /// </summary>
         internal void AddFlight(Flight flight)
         {
             Flights.Add(flight);
         }
-        internal void AddReservation(Reservation reservation)
-        {
-            if (reservation.Flight.Status == FlightStatus.OpenForReservation)
-            {
-                reservation.Flight.AddReservation(reservation);
-                ReservationInfo?.Invoke($"{reservation.Passenger.FirstName} has booked a ticket to {reservation.Flight.Destination}");
-            }
-            else
-            {
-                throw new Exception("Reservation failed, flight is full!");
-            }
-        }
 
+        /// <summary>
+        /// Used to update flight statuses
+        /// </summary>
         internal void UpdateStatuses()
         {
             for (int i = 0; i < Flights.Count; i++)
             {
-                Flights[i].UpdateFlightStatus(Time);
+                Flights[i].UpdateFlightStatuses(Time);
             }
         }
+
+        /// <summary>
+        /// Used to remove old flights from the schedule
+        /// </summary>
         internal void RemoveOldFlights()
         {
             if (Flights.Count > 0)
@@ -64,49 +64,51 @@ namespace BaggageSorteringLib
             }
         }
 
-        internal void GenerateRandomFlights(int bustleLevel, bool isAutoGenereatedReservationEnabled)
+        /// <summary>
+        /// Used to generate random flights
+        /// </summary>
+        internal void GenerateRandomFlights(int bustleLevel, bool isAutoGenereatedReservationsEnabled)
         {
-            if (bustleLevel <= 0)
-            {
-                bustleLevel = 1;
-            }
-
             while (Flights.Count < 1000)
             {
                 DateTime startArrival = Time.DateTime;
 
                 if (Flights.Count > 0)
                 {
+                    // Finds most far away flight arrival from now
                     startArrival = Flights.OrderByDescending(f => f.Arrival).FirstOrDefault().Arrival;
                 }
 
-                Flight flight = AutoGenerator.CreateRandomFlight(startArrival, 0, 600 / bustleLevel);
+                // Creates random flight
+                Flight flight = AutoGenerator.CreateRandomFlight(
+                    startArrival: startArrival, 
+                    minArrival: 0, 
+                    maxArrival: 600 / bustleLevel
+                );
 
-                if (isAutoGenereatedReservationEnabled)
+                // Auto generate flight ticket if enabled
+                if (isAutoGenereatedReservationsEnabled)
                 {
-                    int minSeats = bustleLevel * 10;
-                    if (minSeats > flight.SeatsAmount)
-                    {
-                        minSeats = flight.SeatsAmount;
-                    }
-                    int amount = rng.Next(minSeats, flight.SeatsAmount);
-
-                    for (int i = 0; i < amount; i++)
-                    {
-                        AddReservation(AutoGenerator.CreateRandomReservation(flight));
-                    }
-                    AutoReservationsInfo?.Invoke($"{amount} auto generated people has made a reservation on {flight.Name}");
+                    flight.AutoBookFlightTickets(bustleLevel * 10);
                 }
 
+                // Sets event refrences
                 flight.FlightInfo = FlightInfo;
                 flight.BadFlightInfo = BadFlightInfo;
+
                 AddFlight(flight);
             }
         }
 
+        /// <summary>
+        /// Used to update flight screen with newest flight information
+        /// </summary>
         internal void UpdateFlightScreen()
         {
+            // Gets all flights ordered by the depature
             List<Flight> flights = Flights.OrderBy(x => x.Departure).ToList();
+            
+            // Clears flight screen
             FlightScreen.Clear();
 
             for (int i = 0; i < flights.Count; i++)
