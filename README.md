@@ -1,3 +1,3 @@
 # H2-BaggageSortering
 
-Teamwork Tobias & Jonas
+Teamwork Tobias and Jonas
