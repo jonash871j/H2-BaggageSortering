@@ -58,7 +58,7 @@ namespace BaggageSorteringLib
                     // Updates the sortering processes
                     UpdateCounterToSorterProcess();
                     UpdateSorterToTerminalProcess();
-                    Thread.Sleep(256 / Time.Speed);
+                    Thread.Sleep(128 / Time.Speed);
 
                     // Clears conveyor belt when requested
                     if (isClearRequested)
