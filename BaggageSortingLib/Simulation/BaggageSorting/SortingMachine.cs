@@ -9,17 +9,19 @@ namespace BaggageSorteringLib
     {
         public SortingMachine(SimulationTime time, int conveyorBeltLength, CheckinArea checkinArea, TerminalsArea terminalsArea)
         {
-            Time = time;
-            Counters = checkinArea.Counters;
-            Terminals = terminalsArea.Terminals;
+            this.time = time;
+            counters = checkinArea.Counters;
+            terminals = terminalsArea.Terminals;
             ConveyorBelt = new ConveyorBelt<Luggage>(conveyorBeltLength);
         }
 
-        private static readonly Random rng = new Random();
-        private readonly SimulationTime Time;
-        private readonly Counter[] Counters;
-        private readonly Terminal[] Terminals;
+        private readonly static Random rng = new Random();
+        private readonly SimulationTime time;
+        private readonly Counter[] counters;
+        private readonly Terminal[] terminals;
+        private Thread sorterThread;
         private bool isClearRequested = false;
+        private bool isStopRequested = false;
 
         public ConveyorBelt<Luggage> ConveyorBelt { get; private set; }
         public MessageEvent ProcessInfo { get; set; }
@@ -31,9 +33,18 @@ namespace BaggageSorteringLib
         /// </summary>
         internal void Start()
         {
-            Thread sorterThread = new Thread(SortingMachineProcess);
+            sorterThread = new Thread(SortingMachineProcess);
             sorterThread.Name = "SorterThread";
             sorterThread.Start();
+        }
+
+        /// <summary>
+        /// Used to stop sorting machine process
+        /// </summary>
+        internal void Stop()
+        {
+            isStopRequested = true;
+            sorterThread.Join();
         }
 
         /// <summary>
@@ -53,12 +64,12 @@ namespace BaggageSorteringLib
 
             try
             {
-                while (true)
+                while (!isStopRequested)
                 {
                     // Updates the sortering processes
                     UpdateCounterToSorterProcess();
                     UpdateSorterToTerminalProcess();
-                    Thread.Sleep(128 / Time.Speed);
+                    Thread.Sleep(128 / time.Speed);
 
                     // Clears conveyor belt when requested
                     if (isClearRequested)
@@ -82,7 +93,7 @@ namespace BaggageSorteringLib
             if (ConveyorBelt.IsSpace())
             {
                 // Gets all counters there has luggage to go on the conveyor belt
-                List<Counter> counters = Counters.Where(c => c.IsLuggageReady()).ToList();
+                List<Counter> counters = this.counters.Where(c => c.IsLuggageReady()).ToList();
 
                 if (counters.Count != 0)
                 {
@@ -112,7 +123,7 @@ namespace BaggageSorteringLib
                 Luggage luggage = ConveyorBelt.Pull();
 
                 // Finds the terminal where the luggage should goto
-                Terminal terminal = Terminals.FirstOrDefault(t => t.Id == luggage.TerminalId);
+                Terminal terminal = terminals.FirstOrDefault(t => t.Id == luggage.TerminalId);
 
                 if (terminal != null)
                 {

@@ -55,6 +55,15 @@ namespace BaggageSorteringLib
         }
 
         /// <summary>
+        /// Used to stop simulation
+        /// </summary>
+        public void Stop()
+        {
+            Time.Stop();
+            SortingMachine.Stop();
+        }
+
+        /// <summary>
         /// Used to restart the simulation
         /// </summary>
         public void Restart()

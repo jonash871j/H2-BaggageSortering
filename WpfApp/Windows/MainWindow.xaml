@@ -1,0 +1,55 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp.UserControls"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" FontSize="13px" Height="32px">
+            <MenuItem Header="Speed" Margin="2, 2">
+                <MenuItem x:Name="MI_Speed1x" Header="1x" Click="MI_Speed1x_Click"/>
+                <MenuItem x:Name="MI_Speed2x" Header="2x" Click="MI_Speed2x_Click"/>
+                <MenuItem x:Name="MI_Speed4x" Header="4x" Click="MI_Speed4x_Click"/>
+                <MenuItem x:Name="MI_Speed8x" Header="8x" Click="MI_Speed8x_Click"/>
+                <MenuItem x:Name="MI_Speed16x" Header="16x" Click="MI_Speed16x_Click"/>
+                <MenuItem x:Name="MI_Speed32x" Header="32x" Click="MI_Speed32x_Click"/>
+                <MenuItem x:Name="MI_Speed64x" Header="64x" Click="MI_Speed64x_Click"/>
+                <MenuItem x:Name="MI_Speed128x" Header="128x" Click="MI_Speed128x_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="MI_About" Header="About" Click="MI_About_Click" Margin="2, 2"/>
+            <MenuItem x:Name="MI_Exit" Header="Exit" Click="MI_Exit_Click" Margin="2, 2"/>
+        </Menu>
+
+        <TabControl Grid.Row="1" Margin="8, 8">
+            <TabItem Header="AirportOverview">
+                <local:AirportOverviewControl x:Name="AOCon_AirportOverview"/>
+            </TabItem>
+            <TabItem Header="FlightSchedule">
+        
+            </TabItem>
+            <TabItem Header="Reservations">
+
+            </TabItem>
+            <TabItem Header="Options">
+
+            </TabItem>
+            <TabItem Header="Consoles">
+                <local:AirportConsolesControl x:Name="ACCon_Consoles"/>
+            </TabItem>
+        </TabControl>
+        
+        <StatusBar Grid.Row="2">
+            <StatusBarItem HorizontalAlignment="Right">
+                <ResizeGrip Grid.Column="1"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
