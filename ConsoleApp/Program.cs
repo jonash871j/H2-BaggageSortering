@@ -14,16 +14,14 @@ class Program
         Simulator sim = new Simulator(
             counterAmount: 10,
             terminalAmount: 15,
-            conveyorBeltLength: 20,
-            flightScreenLength: 12
+            conveyorBeltLength: 20
         );
         sim.IsAutoGenereatedReservationsEnabled = true;
         sim.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;
         sim.SortingMachine.ProcessExceptionInfo += OnSortingMachineProcessError;
-        sim.FlightSchedule.AutoReservationsInfo += OnGeneralInfo;
         sim.FlightSchedule.FlightInfo += OnGeneralInfo;
         sim.FlightSchedule.BadFlightInfo += OnGeneralWarningInfo;
-        sim.ProcessExceptionInfo = OnGeneralErrorInfo;
+        sim.ProcessExceptionInfo += OnGeneralErrorInfo;
         sim.Start();
 
         // Creates advanced console

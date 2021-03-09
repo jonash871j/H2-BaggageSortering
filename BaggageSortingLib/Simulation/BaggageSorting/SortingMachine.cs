@@ -24,8 +24,8 @@ namespace BaggageSorteringLib
         private bool isStopRequested = false;
 
         public ConveyorBelt<Luggage> ConveyorBelt { get; private set; }
-        public MessageEvent ProcessInfo { get; set; }
-        public MessageEvent ProcessExceptionInfo { get; set; }
+        public event MessageEvent ProcessInfo;
+        public event MessageEvent ProcessExceptionInfo;
 
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace BaggageSorteringLib
                 while (!isStopRequested)
                 {
                     // Updates the sortering processes
-                    UpdateCounterToSorterProcess();
                     UpdateSorterToTerminalProcess();
+                    UpdateCounterToSorterProcess();
                     Thread.Sleep(128 / time.Speed);
 
                     // Clears conveyor belt when requested

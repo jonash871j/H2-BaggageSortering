@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="WpfApp.UserControls.AirportTerminalControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfApp.UserControls"
+             mc:Ignorable="d" 
+             MinWidth="180"
+             MinHeight="180"
+             d:DesignHeight="180" d:DesignWidth="180">
+    <Grid Background="White">
+        <GroupBox>
+            <GroupBox.Header>
+                <Grid Height="32px"> 
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Canvas Grid.Column="0">
+                        <Rectangle x:Name="Rect_Color" Width="16px" Height="24px" />
+                    </Canvas>
+                    <Label x:Name="Lb_Title" Grid.Column="1" FontWeight="Bold"/>
+                </Grid>
+            </GroupBox.Header>
+            <Grid Margin="8, 8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="16"/>
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label x:Name="Lb_Destination" Grid.Row="0" Grid.Column="0" Padding="0" />
+                <Label x:Name="Lb_Name" Grid.Row="0" Grid.Column="1" Padding="0" />
+                <Label x:Name="Lb_Depature" Grid.Row="1" Grid.Column="0" Padding="0"/>
+                <Label x:Name="Lb_Checkedin" Grid.Row="3" Grid.Column="0" Padding="0"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

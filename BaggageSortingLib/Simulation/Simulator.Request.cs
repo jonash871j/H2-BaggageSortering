@@ -1,4 +1,7 @@
-﻿namespace BaggageSorteringLib
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace BaggageSorteringLib
 {
     public partial class Simulator
     {

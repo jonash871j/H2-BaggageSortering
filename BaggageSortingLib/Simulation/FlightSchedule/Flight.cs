@@ -32,8 +32,8 @@ namespace BaggageSorteringLib
         public Terminal Terminal { get; private set; }
         public bool IsAtTerminal { get; private set; }
 
-        public MessageEvent FlightInfo { get; set; }
-        public MessageEvent BadFlightInfo { get; set; }
+        public event MessageEvent FlightInfo;
+        public event MessageEvent BadFlightInfo;
 
         /// <summary>
         /// Used to check if there is any seats available on the flight
@@ -60,6 +60,14 @@ namespace BaggageSorteringLib
         public int GetCheckinAmount()
         {
             return Reservations.FindAll(r => r.IsCheckedIn).Count;
+        }
+
+        /// <summary>
+        /// Used to get the amount of passenger there is not check in on the plane
+        /// </summary>
+        public int GetNotCheckinAmount()
+        {
+            return Reservations.Count - GetCheckinAmount();
         }
 
         /// <summary>

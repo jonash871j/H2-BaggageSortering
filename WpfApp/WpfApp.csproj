@@ -59,6 +59,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\AirportFlightScheduleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AirportLuggageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AirportTerminalControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\AirportCounterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\AirportOverviewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -75,8 +91,21 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Misc\AirportColors.cs" />
     <Compile Include="UserControls\AirportConsolesControl.xaml.cs">
       <DependentUpon>AirportConsolesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AirportFlightScheduleControl.xaml.cs">
+      <DependentUpon>AirportFlightScheduleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AirportLuggageControl.xaml.cs">
+      <DependentUpon>AirportLuggageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AirportTerminalControl.xaml.cs">
+      <DependentUpon>AirportTerminalControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AirportCounterControl.xaml.cs">
+      <DependentUpon>AirportCounterControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\AirportOverviewControl.xaml.cs">
       <DependentUpon>AirportOverviewControl.xaml</DependentUpon>

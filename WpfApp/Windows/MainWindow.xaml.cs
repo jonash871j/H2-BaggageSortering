@@ -1,18 +1,8 @@
 ﻿using BaggageSorteringLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace WpfApp
 {
@@ -22,6 +12,7 @@ namespace WpfApp
     public partial class MainWindow : Window
     {
         public Simulator Simulator { get; private set; }
+        public int slowCounter = 100;
 
         public MainWindow()
         {
@@ -30,18 +21,45 @@ namespace WpfApp
             Simulator = new Simulator(
                 counterAmount: 10,
                 terminalAmount: 15,
-                conveyorBeltLength: 20,
-                flightScreenLength: 12
+                conveyorBeltLength: 20
             );
 
             Simulator.IsAutoGenereatedReservationsEnabled = true;
-            AOCon_AirportOverview.Simulator = Simulator;
+            AOCon_AirportOverview.SetSimulator(Simulator);
             ACCon_Consoles.SetSimulator(Simulator);
+            AFSCon_FlightSchedule.SetSimulator(Simulator);
             Simulator.Start();
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.01);
+            timer.Tick += OnTick;
+            timer.Start();
         }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             Simulator.Stop();
+        }
+
+        private void OnTick(object sender, EventArgs e)
+        {
+            if (Monitor.TryEnter(Simulator))
+            {
+                if (slowCounter >= 100)
+                {
+                    AFSCon_FlightSchedule.Update();
+                    slowCounter = 0;
+                }
+                AOCon_AirportOverview.Update();
+
+                SBI_Time.Content = $" {Simulator.Time.DateTime.ToString("dd-MM | HH:mm")}  ";
+                SBI_Speed.Content = $"Speed {Simulator.Time.Speed}x  ";
+                SBI_Bustle.Content = $"Bustle lvl {Simulator.BustleLevel} ";
+
+                Monitor.PulseAll(Simulator);
+                Monitor.Exit(Simulator);
+            }
+            slowCounter++;
         }
 
         private void MI_Speed1x_Click(object sender, RoutedEventArgs e) => Simulator.Time.Speed = 1;

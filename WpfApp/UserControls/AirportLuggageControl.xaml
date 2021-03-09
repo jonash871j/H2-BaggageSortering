@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="WpfApp.UserControls.AirportLuggageControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfApp.UserControls"
+             mc:Ignorable="d" 
+             MinWidth="80"
+             MinHeight="80"
+             d:DesignHeight="64" d:DesignWidth="64">
+    <Grid Background="Black">
+        <Canvas Grid.Row="1">
+            <Rectangle x:Name="Rect_Counter" Width="80" Height="80" Fill="Blue"/>
+            <Rectangle x:Name="Rect_Terminal" Margin="16, 16" Width="48" Height="48" Fill="Green"/>
+            <Label x:Name="Lb_Index" Content="X" FontSize="16" FontWeight="Bold" Height="80" Width="80" Foreground="White"/>
+        </Canvas>
+
+    </Grid>
+</UserControl>

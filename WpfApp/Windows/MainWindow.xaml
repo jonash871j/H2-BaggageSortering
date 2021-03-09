@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp.UserControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+        Title="MainWindow" Height="768" Width="1024" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="24"/>
+            <RowDefinition Height="32"/>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" FontSize="13px" Height="32px">
@@ -33,7 +33,7 @@
                 <local:AirportOverviewControl x:Name="AOCon_AirportOverview"/>
             </TabItem>
             <TabItem Header="FlightSchedule">
-        
+                <local:AirportFlightScheduleControl x:Name="AFSCon_FlightSchedule"/>
             </TabItem>
             <TabItem Header="Reservations">
 
@@ -46,7 +46,11 @@
             </TabItem>
         </TabControl>
         
-        <StatusBar Grid.Row="2">
+        <StatusBar Grid.Row="2" FontSize="16px">
+            <StatusBarItem x:Name="SBI_Time" Content="00:00" FontWeight="Bold"/>
+            <StatusBarItem x:Name="SBI_Speed" Content="Speed 1x"/>
+            <StatusBarItem x:Name="SBI_Bustle" Content="Bustle 1 lvl"/>
+            
             <StatusBarItem HorizontalAlignment="Right">
                 <ResizeGrip Grid.Column="1"/>
             </StatusBarItem>

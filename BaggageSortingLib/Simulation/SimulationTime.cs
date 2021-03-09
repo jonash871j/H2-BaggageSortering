@@ -28,7 +28,7 @@ namespace BaggageSorteringLib
                 Timer.Interval = 1000 / _speed;
             }
         }
-        internal TimeUpdateEvent TimeUpdate { get; set; }
+        internal UpdateEvent TimeUpdate { get; set; }
 
         /// <summary>
         /// Used to start time

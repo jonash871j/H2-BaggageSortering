@@ -10,17 +10,26 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Counters">
-        
+            <ScrollViewer>
+                <WrapPanel x:Name="WP_Counters" Orientation="Horizontal"/>
+            </ScrollViewer>
+
         </GroupBox>
-        
-        <GroupBox Grid.Row="1" Header="Sorting Machine - Conveyor Belt"/>
+
+        <GroupBox Grid.Row="1" Header="Sorting Machine - Conveyor Belt">
+            <ScrollViewer Background="Black">
+                <WrapPanel x:Name="WP_Luggages" Orientation="Horizontal" VerticalAlignment="Center"/>
+            </ScrollViewer>
+        </GroupBox>
 
         <GroupBox Grid.Row="2" Header="Terminals">
-
+            <ScrollViewer>
+                <WrapPanel x:Name="WP_Terminals" Orientation="Horizontal"/>
+            </ScrollViewer>
         </GroupBox>
     </Grid>
 </UserControl>

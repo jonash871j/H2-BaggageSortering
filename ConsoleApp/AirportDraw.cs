@@ -58,7 +58,7 @@ static class AirportDraw
     public static void FlightSchedule(int y, FlightSchedule flightSchedule)
     {
         Draw.Color = Color.Grey;
-        Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + flightSchedule.FlightScreenLength + 2, true, '.');
+        Draw.Rectangle(0, y, ConsoleEx.Width - 1, y + 12 + 2, true, '.');
 
         ConsoleEx.SetPosition(2, y + 1);
         ConsoleEx.WriteLine("\f3- FLIGHT SCHEDULE");
@@ -70,7 +70,7 @@ static class AirportDraw
             "STATUS                  " +
             "CHECKIN/BOOKED/MAX"
         );
-        foreach (Flight f in flightSchedule.FlightScreen)
+        foreach (Flight f in flightSchedule.ActiveFlights)
         {
 
             ConsoleEx.Write($"{f.Departure.ToString("HH:mm")}");

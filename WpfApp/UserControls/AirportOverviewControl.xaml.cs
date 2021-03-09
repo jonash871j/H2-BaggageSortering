@@ -1,31 +1,52 @@
 ﻿using BaggageSorteringLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WpfApp.UserControls
 {
-    /// <summary>
-    /// Interaction logic for AirportOverviewControl.xaml
-    /// </summary>
     public partial class AirportOverviewControl : UserControl
     {
-        public Simulator Simulator { get; set; }
+        public Simulator Simulator { get; private set; }
 
         public AirportOverviewControl()
         {
             InitializeComponent();
+        }
+
+        public void SetSimulator(Simulator simulator)
+        {
+            Simulator = simulator;
+
+            foreach (Counter counter in Simulator.CheckinArea.Counters)
+            {
+                WP_Counters.Children.Add(new AirportCounterControl(counter));
+            }
+            for (int i = 0; i < Simulator.SortingMachine.ConveyorBelt.Length; i++)
+            {
+                WP_Luggages.Children.Add(new AirportLuggageControl(i));
+            }
+            foreach (Terminal terminal in Simulator.TerminalsArea.Terminals)
+            {
+                WP_Terminals.Children.Add(new AirportTerminalControl(terminal));
+            }
+        }
+
+        public void Update()
+        {
+            foreach (AirportCounterControl counterControl in WP_Counters.Children)
+            {
+                counterControl.Update();
+            }
+            //foreach (AirportLuggageControl luggageControl in WP_Luggages.Children)
+            for (int i = 0; i < WP_Luggages.Children.Count; i++)
+            {
+                AirportLuggageControl luggageControl = (AirportLuggageControl)WP_Luggages.Children[i];
+                luggageControl.Luggage = Simulator.SortingMachine.ConveyorBelt[i];
+                luggageControl.Update();
+            }
+            foreach (AirportTerminalControl terminalControl in WP_Terminals.Children)
+            {
+                terminalControl.Update();
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace BaggageSorteringLib
 {
     public partial class Simulator
     {
-        public Simulator(int counterAmount, int terminalAmount, int conveyorBeltLength, int flightScreenLength)
+        public Simulator(int counterAmount, int terminalAmount, int conveyorBeltLength)
         {
             Time = new SimulationTime();
             Time.TimeUpdate = OnTimeUpdate;
@@ -13,10 +13,10 @@ namespace BaggageSorteringLib
             CheckinArea = new CheckinArea(counterAmount);
             TerminalsArea = new TerminalsArea(terminalAmount);
             SortingMachine = new SortingMachine(Time, conveyorBeltLength, CheckinArea, TerminalsArea);
-            FlightSchedule = new FlightSchedule(Time, flightScreenLength);
+            FlightSchedule = new FlightSchedule(Time);
         }
 
-        private int _bustleLevel = 4;
+        private int _bustleLevel = 10;
 
         public SimulationTime Time { get; private set; }
         public CheckinArea CheckinArea { get; private set; }
@@ -25,7 +25,7 @@ namespace BaggageSorteringLib
         public FlightSchedule FlightSchedule { get; private set; }
         public bool IsSimulationStarted { get; private set; }
 
-        public MessageEvent ProcessExceptionInfo { get; set; }
+        public event MessageEvent ProcessExceptionInfo;
         public bool IsAutoGenereatedReservationsEnabled { get; set; }
         public int BustleLevel 
         {

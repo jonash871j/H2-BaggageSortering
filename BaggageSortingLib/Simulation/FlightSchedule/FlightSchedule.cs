@@ -6,31 +6,28 @@ namespace BaggageSorteringLib
 {
     public class FlightSchedule
     {
-        public FlightSchedule(SimulationTime time, int flightScreenLength)
+        public FlightSchedule(SimulationTime time)
         {
             Time = time;
-            FlightScreenLength = flightScreenLength;
-            FlightScreen = new List<Flight>();
+            ActiveFlights = new List<Flight>();
             Flights = new List<Flight>();
         }
 
         private static Random rng = new Random();
 
         public SimulationTime Time { get; private set; }
-        public int FlightScreenLength { get; private set; }
-        public List<Flight> FlightScreen { get; private set; }
+        public List<Flight> ActiveFlights { get; private set; }
         public List<Flight> Flights { get; private set; }
 
-        public MessageEvent AutoReservationsInfo;
-        public MessageEvent FlightInfo;
-        public MessageEvent BadFlightInfo;
+        public event MessageEvent FlightInfo;
+        public event MessageEvent BadFlightInfo;
 
         /// <summary>
         /// Used to clear flight schedule
         /// </summary>
         internal void Clear()
         {
-            FlightScreen.Clear();
+            ActiveFlights.Clear();
             Flights.Clear();
         }
 
@@ -93,8 +90,8 @@ namespace BaggageSorteringLib
                 }
 
                 // Sets event refrences
-                flight.FlightInfo = FlightInfo;
-                flight.BadFlightInfo = BadFlightInfo;
+                flight.FlightInfo += FlightInfo;
+                flight.BadFlightInfo += BadFlightInfo;
 
                 AddFlight(flight);
             }
@@ -106,22 +103,9 @@ namespace BaggageSorteringLib
         internal void UpdateFlightScreen()
         {
             // Gets all flights ordered by the depature
-            List<Flight> flights = Flights.OrderBy(x => x.Departure).ToList();
-            
-            // Clears flight screen
-            FlightScreen.Clear();
-
-            for (int i = 0; i < flights.Count; i++)
-            {
-                if (i >= FlightScreenLength)
-                {
-                    break;
-                }
-                else
-                {
-                    FlightScreen.Add(flights[i]);
-                }
-            }
+            ActiveFlights = Flights.FindAll(f => f.Status != FlightStatus.OpenForReservation)
+                .OrderBy(f => f.Departure)
+                .ToList();
         }
     }
 }
