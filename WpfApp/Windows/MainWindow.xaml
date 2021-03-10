@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         MinWidth="800"
         MinHeight="600"
-        Title="Baggage Sorting Simulator" Height="768" Width="1024" Closed="Window_Closed" Icon="LuggageIcon.png">
+        Title="Baggage Sorting Simulator" Height="768" Width="1024" Closed="Window_Closed" Icon="\Resources\LuggageIcon.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
