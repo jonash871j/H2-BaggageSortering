@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp.UserControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1024" Closed="Window_Closed">
+        MinWidth="800"
+        MinHeight="600"
+        Title="Baggage Sorting Simulator" Height="768" Width="1024" Closed="Window_Closed" Icon="LuggageIcon.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -24,6 +26,18 @@
                 <MenuItem x:Name="MI_Speed64x" Header="64x" Click="MI_Speed64x_Click"/>
                 <MenuItem x:Name="MI_Speed128x" Header="128x" Click="MI_Speed128x_Click"/>
             </MenuItem>
+            <MenuItem Header="Bustle" Margin="2, 2">
+                <MenuItem x:Name="MI_BustleLvl1" Header="Bustle Level 1" Click="MI_BustleLvl1_Click"/>
+                <MenuItem x:Name="MI_BustleLvl2" Header="Bustle Level 2" Click="MI_BustleLvl2_Click"/>
+                <MenuItem x:Name="MI_BustleLvl3" Header="Bustle Level 3" Click="MI_BustleLvl3_Click"/>
+                <MenuItem x:Name="MI_BustleLvl4" Header="Bustle Level 4" Click="MI_BustleLvl4_Click"/>
+                <MenuItem x:Name="MI_BustleLvl5" Header="Bustle Level 5" Click="MI_BustleLvl5_Click"/>
+                <MenuItem x:Name="MI_BustleLvl6" Header="Bustle Level 6" Click="MI_BustleLvl6_Click"/>
+                <MenuItem x:Name="MI_BustleLvl7" Header="Bustle Level 7" Click="MI_BustleLvl7_Click"/>
+                <MenuItem x:Name="MI_BustleLvl8" Header="Bustle Level 8" Click="MI_BustleLvl8_Click"/>
+                <MenuItem x:Name="MI_BustleLvl9" Header="Bustle Level 9" Click="MI_BustleLvl9_Click"/>
+                <MenuItem x:Name="MI_BustleLvl10" Header="Bustle Level 10" Click="MI_BustleLvl10_Click"/>
+            </MenuItem>
             <MenuItem x:Name="MI_About" Header="About" Click="MI_About_Click" Margin="2, 2"/>
             <MenuItem x:Name="MI_Exit" Header="Exit" Click="MI_Exit_Click" Margin="2, 2"/>
         </Menu>
@@ -34,12 +48,6 @@
             </TabItem>
             <TabItem Header="FlightSchedule">
                 <local:AirportFlightScheduleControl x:Name="AFSCon_FlightSchedule"/>
-            </TabItem>
-            <TabItem Header="Reservations">
-
-            </TabItem>
-            <TabItem Header="Options">
-
             </TabItem>
             <TabItem Header="Consoles">
                 <local:AirportConsolesControl x:Name="ACCon_Consoles"/>

@@ -16,7 +16,7 @@ namespace BaggageSorteringLib
             FlightSchedule = new FlightSchedule(Time);
         }
 
-        private int _bustleLevel = 10;
+        private int _bustleLevel = 5;
 
         public SimulationTime Time { get; private set; }
         public CheckinArea CheckinArea { get; private set; }
@@ -35,6 +35,7 @@ namespace BaggageSorteringLib
                 if (value > 0 && value <= 10)
                 {
                     _bustleLevel = value;
+                    Restart();
                 }
             }
         }

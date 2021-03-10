@@ -16,7 +16,6 @@ namespace BaggageSorteringLib
 
         private readonly System.Timers.Timer Timer;
         private int _speed;
-        private bool isTimeStopRequested = false;
 
         public DateTime DateTime { get; private set; }
         public int Speed
@@ -43,11 +42,7 @@ namespace BaggageSorteringLib
         /// </summary>
         internal void Stop()
         {
-            isTimeStopRequested = true;
-            while (Timer.Enabled)
-            {
-                Thread.Sleep(1);
-            }
+            Timer.Enabled = false;
             DateTime = DateTime.Now;
         }
 
@@ -62,12 +57,6 @@ namespace BaggageSorteringLib
                 DateTime = DateTime.AddSeconds(15);
                 Monitor.PulseAll(this);
                 Monitor.Exit(this);
-            }
-
-            if (isTimeStopRequested)
-            {
-                Timer.Enabled = false;
-                isTimeStopRequested = false;
             }
         }
     }

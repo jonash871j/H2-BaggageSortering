@@ -8,7 +8,11 @@ namespace BaggageSorteringLib
         public CheckinArea(int counterAmount)
         {
             Counters = new Counter[counterAmount];
-            Clear();
+
+            for (int i = 0; i < Counters.Length; i++)
+            {
+                Counters[i] = new Counter(id: i);
+            }
         }
 
         public Counter[] Counters { get; private set; }
@@ -20,7 +24,7 @@ namespace BaggageSorteringLib
         {
             for (int i = 0; i < Counters.Length; i++)
             {
-                Counters[i] = new Counter(id: i);
+                Counters[i].Close();
             }
         }
 

@@ -12,7 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <GroupBox Grid.Row="0" Header="Upcoming Flights">
-            <DataGrid x:Name="DG_ActiveFlights" AutoGenerateColumns="False" IsReadOnly="True" Margin="8, 8">
+            <DataGrid x:Name="DG_ActiveFlights" AutoGenerateColumns="False" IsReadOnly="True" Margin="8, 8" SelectionChanged="DG_ActiveFlights_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Departure" Width="64" Binding="{Binding Path=Departure, StringFormat= HH:mm}"/>
                     <DataGridTextColumn Header="Destination" Width="*" Binding="{Binding Destination}"/>
@@ -22,6 +22,52 @@
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
+        <GroupBox Grid.Row="1" Header="Selected Flight">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
 
+                <StackPanel Grid.Column="0" Margin="8, 8">
+                    <Label Content="Name"/>
+                    <TextBox x:Name="TB_Name" IsReadOnly="True" Height="24"/>
+                    <Label Content="Seats Amount"/>
+                    <TextBox x:Name="TB_SeatsAmount" IsReadOnly="True" Height="24"/>
+                    <Label Content="Status"/>
+                    <TextBox x:Name="TB_Status" IsReadOnly="True" Height="24"/>
+                    <Label Content="Reservations Amount"/>
+                    <TextBox x:Name="TB_ReservationsAmount" IsReadOnly="True" Height="24"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="8, 8">
+                    <Label Content="Arrival"/>
+                    <TextBox x:Name="TB_Arrival" IsReadOnly="True" Height="24"/>
+                    <Label Content="Departure"/>
+                    <TextBox x:Name="TB_Departure" IsReadOnly="True" Height="24"/>
+                    <Label Content="Destination"/>
+                    <TextBox x:Name="TB_Destination" IsReadOnly="True" Height="24"/>
+                </StackPanel>
+
+                <Grid Grid.Column="2" Margin="8, 8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Passengers" Padding="0"/>
+                    <ListView x:Name="LV_Passengers" Grid.Row="1">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <TextBlock Text="{Binding Passenger.FirstName}" />
+                                    <TextBlock Text=" "/>
+                                    <TextBlock Text="{Binding Passenger.LastName}" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Grid>
+        </GroupBox>
     </Grid>
 </UserControl>

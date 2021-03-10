@@ -8,7 +8,10 @@ namespace BaggageSorteringLib
         public TerminalsArea(int terminalAmount)
         {
             Terminals = new Terminal[terminalAmount];
-            Clear();
+            for (int i = 0; i < Terminals.Length; i++)
+            {
+                Terminals[i] = new Terminal(id: i);
+            }
         }
 
         public Terminal[] Terminals { get; private set; }
@@ -20,7 +23,7 @@ namespace BaggageSorteringLib
         {
             for (int i = 0; i < Terminals.Length; i++)
             {
-                Terminals[i] = new Terminal(id: i);
+                Terminals[i].Close();
             }
         }
 

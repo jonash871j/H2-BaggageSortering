@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:WpfApp.UserControls"
              mc:Ignorable="d" 
              MinWidth="180"
-             MinHeight="180"
-             d:DesignHeight="180" d:DesignWidth="180">
+             MinHeight="128"
+             d:DesignHeight="128" d:DesignWidth="180">
     <Grid Background="White">
         <GroupBox>
             <GroupBox.Header>

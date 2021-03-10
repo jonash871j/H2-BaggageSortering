@@ -36,7 +36,6 @@ namespace WpfApp.UserControls
             {
                 counterControl.Update();
             }
-            //foreach (AirportLuggageControl luggageControl in WP_Luggages.Children)
             for (int i = 0; i < WP_Luggages.Children.Count; i++)
             {
                 AirportLuggageControl luggageControl = (AirportLuggageControl)WP_Luggages.Children[i];
