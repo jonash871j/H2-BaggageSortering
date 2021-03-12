@@ -8,6 +8,7 @@
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <GroupBox Grid.Row="0" Header="Upcoming Flights">
@@ -21,7 +22,8 @@
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
-        <GroupBox Grid.Row="1" Header="Selected Flight">
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
+        <GroupBox Grid.Row="2" Header="Selected Flight">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

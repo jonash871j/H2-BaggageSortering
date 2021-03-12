@@ -8,7 +8,9 @@
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -17,14 +19,14 @@
                 <WrapPanel x:Name="WP_Counters"  Orientation="Horizontal"/>
             </ScrollViewer>
         </GroupBox>
-
-        <GroupBox Grid.Row="1" Header="Sorting Machine - Conveyor Belt">
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
+        <GroupBox Grid.Row="2" Header="Sorting Machine - Conveyor Belt">
             <ScrollViewer Background="Black">
                 <WrapPanel x:Name="WP_Luggages" Orientation="Horizontal" VerticalAlignment="Center"/>
             </ScrollViewer>
         </GroupBox>
-
-        <GroupBox Grid.Row="2" Header="Terminals">
+        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch"/>
+        <GroupBox Grid.Row="4" Header="Terminals">
             <ScrollViewer>
                 <WrapPanel x:Name="WP_Terminals" Orientation="Horizontal"/>
             </ScrollViewer>

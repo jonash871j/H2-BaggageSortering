@@ -9,13 +9,15 @@
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Sorting Machine Info">
             <local:ConsoleControl x:Name="CCon_SortingMachineInfo" Margin="4, 4"/>
         </GroupBox>
-        <GroupBox Grid.Row="1" Header="General Info">
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
+        <GroupBox Grid.Row="2" Header="General Info" >
             <local:ConsoleControl x:Name="CCon_GeneralInfo" Margin="4, 4"/>
         </GroupBox>
     </Grid>
