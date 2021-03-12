@@ -109,7 +109,7 @@ namespace BaggageSorteringLib
             FlightSchedule.GenerateRandomFlights(BustleLevel, IsAutoGenereatedReservationsEnabled);
             FlightSchedule.UpdateStatuses();
             FlightSchedule.RemoveOldFlights();
-            FlightSchedule.UpdateFlightScreen();
+            FlightSchedule.UpdateActiveFlights();
 
             CheckinArea.UpdateAutoCheckin();
             CheckinArea.OpenCountersForIncommingFlights(FlightSchedule);

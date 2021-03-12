@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:WpfApp.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
@@ -15,9 +14,8 @@
 
         <GroupBox Grid.Row="0" Header="Counters">
             <ScrollViewer>
-                <WrapPanel x:Name="WP_Counters" Orientation="Horizontal"/>
+                <WrapPanel x:Name="WP_Counters"  Orientation="Horizontal"/>
             </ScrollViewer>
-
         </GroupBox>
 
         <GroupBox Grid.Row="1" Header="Sorting Machine - Conveyor Belt">

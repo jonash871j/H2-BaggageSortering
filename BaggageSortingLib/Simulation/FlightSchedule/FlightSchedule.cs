@@ -21,6 +21,7 @@ namespace BaggageSorteringLib
 
         public event MessageEvent FlightInfo;
         public event MessageEvent BadFlightInfo;
+        public event UpdateEvent FlightScheduleUpdate;
 
         /// <summary>
         /// Used to clear flight schedule
@@ -100,12 +101,30 @@ namespace BaggageSorteringLib
         /// <summary>
         /// Used to update flight screen with newest flight information
         /// </summary>
-        internal void UpdateFlightScreen()
+        internal void UpdateActiveFlights()
         {
             // Gets all flights ordered by the depature
-            ActiveFlights = Flights.FindAll(f => f.Status != FlightStatus.OpenForReservation)
+            List<Flight> flights = Flights.FindAll(f => f.Status != FlightStatus.OpenForReservation)
                 .OrderBy(f => f.Departure)
                 .ToList();
+
+            // Check if there was a update in the flight schedule
+            if (flights.Count != ActiveFlights.Count)
+            {
+                ActiveFlights = flights;
+                FlightScheduleUpdate?.Invoke();
+            }
+            else
+            {
+                for (int i = 0; i < ActiveFlights.Count; i++)
+                {
+                    if (ActiveFlights[i] != flights[i])
+                    {
+                        ActiveFlights = flights;
+                        FlightScheduleUpdate?.Invoke();
+                    }
+                }
+            }
         }
     }
 }

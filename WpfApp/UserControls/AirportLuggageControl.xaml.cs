@@ -6,21 +6,21 @@ namespace WpfApp.UserControls
 {
     public partial class AirportLuggageControl : UserControl
     {
-        public Luggage Luggage { get; set; } = null;
-
         public AirportLuggageControl(int index)
         {
             InitializeComponent();
             Lb_Index.Content = index;
-            Update();
         }
 
-        public void Update()
+        /// <summary>
+        /// Used to update luggage control
+        /// </summary>
+        public void Update(Luggage luggage)
         {
-            if (Luggage != null)
+            if (luggage != null)
             {
-                Rect_Counter.Fill = AirportColors.GetColorById(Luggage.CounterId);
-                Rect_Terminal.Fill = AirportColors.GetColorById(Luggage.TerminalId);
+                Rect_Counter.Fill = AirportColors.GetColorById(luggage.CounterId);
+                Rect_Terminal.Fill = AirportColors.GetColorById(luggage.TerminalId);
             }
             else
             {

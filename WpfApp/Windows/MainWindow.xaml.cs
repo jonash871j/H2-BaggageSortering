@@ -6,51 +6,46 @@ using System.Windows.Threading;
 
 namespace WpfApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public Simulator Simulator { get; private set; }
-        public int slowCounter = 100;
 
         public MainWindow()
         {
             InitializeComponent();
+            InitalizeSimulator();
+        }
+
+        private void InitalizeSimulator()
+        {
+            // Initalizes simulator
             Simulator = new Simulator(
                  counterAmount: 15,
                  terminalAmount: 20,
                  conveyorBeltLength: 23
              );
-
             Simulator.IsAutoGenereatedReservationsEnabled = true;
-            AOCon_AirportOverview.SetSimulator(Simulator);
-            AFSCon_FlightSchedule.SetSimulator(Simulator);
-            ACCon_Consoles.SetSimulator(Simulator);
+            AOCon_AirportOverview.Initialize(Simulator);
+            AFSCon_FlightSchedule.Intialize(Simulator);
+            ACCon_Consoles.Initalize(Simulator);
             Simulator.Start();
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.01);
-            timer.Tick += OnTick;
-            timer.Start();
+            // Starts dispatcherT timer
+            new DispatcherTimer(
+                TimeSpan.FromSeconds(0.01), 
+                DispatcherPriority.Normal, 
+                OnTick,
+                Dispatcher.CurrentDispatcher
+            );
         }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            Simulator.Stop();
-        }
-
         private void OnTick(object sender, EventArgs e)
         {
             if (Monitor.TryEnter(Simulator))
             {
-                if (slowCounter >= 100)
-                {
-                    AFSCon_FlightSchedule.Update();
-                    slowCounter = 0;
-                }
+                // Updates airport overview: counters, conveyorbelt and terminals
                 AOCon_AirportOverview.Update();
 
+                // Updates status bar
                 SBI_Time.Content = $" {Simulator.Time.DateTime.ToString("dd-MM | HH:mm")}  ";
                 SBI_Speed.Content = $"Speed {Simulator.Time.Speed}x  ";
                 SBI_Bustle.Content = $"Bustle lvl {Simulator.BustleLevel} ";
@@ -58,8 +53,9 @@ namespace WpfApp
                 Monitor.PulseAll(Simulator);
                 Monitor.Exit(Simulator);
             }
-            slowCounter++;
         }
+
+        private void Window_Closed(object sender, EventArgs e) => Simulator.Stop();
 
         private void MI_Speed1x_Click(object sender, RoutedEventArgs e) => Simulator.Time.Speed = 1;
         private void MI_Speed2x_Click(object sender, RoutedEventArgs e) => Simulator.Time.Speed = 2;
@@ -83,6 +79,5 @@ namespace WpfApp
 
         private void MI_About_Click(object sender, RoutedEventArgs e) => MessageBox.Show("By Jonas");
         private void MI_Exit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
-
     }
 }

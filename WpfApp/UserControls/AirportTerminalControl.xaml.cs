@@ -1,25 +1,25 @@
 ﻿using BaggageSorteringLib;
-using System;
 using System.Windows.Controls;
 
 namespace WpfApp.UserControls
 {
     public partial class AirportTerminalControl : UserControl
     {
-        private static Random rng = new Random(0);
         public Terminal Terminal { get; private set; }
-
 
         public AirportTerminalControl(Terminal terminal)
         {
-            Terminal = terminal;
             InitializeComponent();
 
+            // Initalize terminal
+            Terminal = terminal;
             Rect_Color.Fill = AirportColors.GetColorById(terminal.Id);
-
             Update();
         }
 
+        /// <summary>
+        /// Used to update terminal
+        /// </summary>
         public void Update()
         {
             if (Terminal.IsFlightReservedToTerminal)

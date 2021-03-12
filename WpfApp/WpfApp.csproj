@@ -145,13 +145,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\LuggageIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BaggageSortingLib\BaggageSorteringLib.csproj">
       <Project>{c8809e4e-5ad0-4911-a1df-c71431addf01}</Project>
       <Name>BaggageSorteringLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Windows\LuggageIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

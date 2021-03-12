@@ -20,6 +20,9 @@ namespace WpfApp.UserControls
             Update();
         }
 
+        /// <summary>
+        /// Used to update counter
+        /// </summary>
         public void Update()
         {
             if (Counter.IsOpen)

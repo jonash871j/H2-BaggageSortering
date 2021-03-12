@@ -15,7 +15,10 @@ namespace WpfApp.UserControls
             InitializeComponent();
         }
 
-        public void SetSimulator(Simulator simulator)
+        /// <summary>
+        /// Used to set simulator and initialize control
+        /// </summary>
+        public void Initalize(Simulator simulator)
         {
             Simulator = simulator;
             Simulator.SortingMachine.ProcessInfo += OnSortingMachineProcessInfo;

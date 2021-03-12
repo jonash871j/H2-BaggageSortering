@@ -1,6 +1,7 @@
 ﻿using BaggageSorteringLib;
-using System.Windows;
+using System;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace WpfApp.UserControls
 {
@@ -13,35 +14,41 @@ namespace WpfApp.UserControls
             InitializeComponent();
         }
 
-        public void SetSimulator(Simulator simulator)
+        public void Intialize(Simulator simulator)
         {
             Simulator = simulator;
+            Simulator.FlightSchedule.FlightScheduleUpdate += OnFlightScheduleUpdate;
         }
 
-        public void Update()
+        /// <summary>
+        /// Used to update flight schedule
+        /// </summary>
+        private void OnFlightScheduleUpdate()
         {
-            DG_ActiveFlights.ItemsSource = Simulator.FlightSchedule.ActiveFlights;
-            DG_ActiveFlights.Items.Refresh();
+            Dispatcher.BeginInvoke(DispatcherPriority.SystemIdle, new Action(() =>
+            {
+                DG_ActiveFlights.ItemsSource = Simulator.FlightSchedule.ActiveFlights;
+                DG_ActiveFlights.Items.Refresh();
+            }));
         }
 
+        /// <summary>
+        /// Used to update flight group box on selection
+        /// </summary>
         private void DG_ActiveFlights_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            object item = (Flight)DG_ActiveFlights.SelectedItem;
-
-            if (item is Flight)
+            if (DG_ActiveFlights.SelectedItem is Flight f)
             {
-                Flight flight = (Flight)item;
+                TB_Name.Text = f.Name;
+                TB_SeatsAmount.Text = f.SeatsAmount.ToString();
+                TB_Status.Text = f.Status.ToString();
+                TB_ReservationsAmount.Text = f.Reservations.Count.ToString();
 
-                TB_Name.Text = flight.Name;
-                TB_SeatsAmount.Text = flight.SeatsAmount.ToString();
-                TB_Status.Text = flight.Status.ToString();
-                TB_ReservationsAmount.Text = flight.Reservations.Count.ToString();
+                TB_Arrival.Text = f.Arrival.ToString("dd-MM | HH:mm");
+                TB_Departure.Text = f.Departure.ToString("dd-MM | HH:mm");
+                TB_Destination.Text = f.Destination;
 
-                TB_Arrival.Text = flight.Arrival.ToString("dd-MM | HH:mm");
-                TB_Departure.Text = flight.Departure.ToString("dd-MM | HH:mm");
-                TB_Destination.Text = flight.Destination;
-
-                LV_Passengers.ItemsSource = flight.Reservations;
+                LV_Passengers.ItemsSource = f.Reservations;
             }
         }
     }

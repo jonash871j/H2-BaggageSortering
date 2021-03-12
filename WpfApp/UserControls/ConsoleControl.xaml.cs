@@ -11,17 +11,21 @@ namespace WpfApp.UserControls
 
         public ConsoleControl()
         {
+            InitializeComponent();
+
+            // Initialize console control
             Lines = new ObservableCollection<string>();
             DataContext = this;
-
-            InitializeComponent();
         }
 
-        public void WriteLine(string text)
+        /// <summary>
+        /// Used to write a new message to the console control 
+        /// </summary>
+        public void WriteLine(string line)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.SystemIdle, new Action(() =>
             {
-                Lines.Insert(0, text);
+                Lines.Insert(0, line);
 
                 if (Lines.Count > 300)
                 {
