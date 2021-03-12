@@ -1,5 +1,7 @@
 ﻿using BaggageSorteringLib;
 using Engine;
+using System.Collections.Generic;
+using System.Linq;
 
 static class AirportDraw
 {
@@ -70,9 +72,10 @@ static class AirportDraw
             "STATUS                  " +
             "CHECKIN/BOOKED/MAX"
         );
-        foreach (Flight f in flightSchedule.ActiveFlights)
-        {
 
+        IEnumerable<Flight> flights = flightSchedule.ActiveFlights.Take(12);
+        foreach (Flight f in flights)
+        {
             ConsoleEx.Write($"{f.Departure.ToString("HH:mm")}");
             ConsoleEx.CursorX = 14;
             ConsoleEx.Write($"{f.Destination}");

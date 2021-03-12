@@ -34,6 +34,7 @@ namespace BaggageSorteringLib
         /// </summary>
         internal void Close()
         {
+            Luggages.Clear();
             RemoveFlightFromTerminal();
             IsOpen = false;
         }
